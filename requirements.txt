@@ -6,3 +6,4 @@ zustand
 dotenv
 next-auth
 @emailjs/browser
+lucide-react

@@ -1,31 +1,34 @@
 'use client'
 
-import { useState } from "react";
-import ContactForm from "@/components/ai_studio_components/ContactForm";
-import ThankYouClient from "@/components/audit_components/thank_you_client";
-import { ContactInfo, Submission, UserResponse, AssessmentResult } from "@/lib/types";
-import { useAuditStore } from "@/lib/auditStore";
-import { analyzeIAQAssessment} from "@/lib/services/geminiService";
+import { useState } from "react"
+import ContactForm from "@/components/ai_studio_components/ContactForm"
+import ThankYouClient from "@/components/audit_components/thank_you_client"
+import { ContactInfo, Submission, UserResponse, AssessmentResult } from "@/lib/types"
+import { useAuditStore } from "@/lib/auditStore"
+import { analyzeIAQAssessment } from "@/lib/services/geminiService"
+import { saveSubmission } from "@/app/actions/saveSubmission"
+import { getAnnouncement, getFriends } from "@/app/actions/getters"
 
 interface IntakeClientProps {
-  referringReportId?: string;
+  referringReportId?: string
 }
 
 export default function IntakeClient({ referringReportId }: IntakeClientProps) {
-  const responses = useAuditStore((state) => state.responses); // audit responses
-  const [activeSubmission, setActiveSubmission] = useState<Submission | null>(null);
-
-  const [contactInfo, setContactInfo] = useState<ContactInfo>({} as ContactInfo);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const responses = useAuditStore((state) => state.responses)
+  const [activeSubmission, setActiveSubmission] = useState<Submission | null>(null)
+  const [contactInfo, setContactInfo] = useState<ContactInfo>({} as ContactInfo)
+  const [isAnalyzing, setIsAnalyzing] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const handleContactSubmit = async (info: ContactInfo) => {
-    setContactInfo(info);
-    setIsAnalyzing(true);
+    setContactInfo(info)
+    setIsAnalyzing(true)
+    setError(null)
 
     try {
       // Step 1: Analyze audit responses using Gemini AI
-      const result: AssessmentResult = await analyzeIAQAssessment(responses as UserResponse[]);
+      const result: AssessmentResult = await analyzeIAQAssessment(responses as UserResponse[])
 
       // Step 2: Build submission object
       const submission: Submission = {
@@ -36,32 +39,59 @@ export default function IntakeClient({ referringReportId }: IntakeClientProps) {
         result,
         responses,
         referredBy: referringReportId || null
-      };
+      }
 
-      
+      // Step 3: Save to Firestore via server action
+      const saveResult = await saveSubmission(submission)
 
-      // Step 3: Update parent with active submission
-      setActiveSubmission(submission);
+      if (!saveResult.success) {
+        throw new Error(saveResult.error || 'Failed to save submission')
+      }
 
-      // Step 4: Save to Firebase 
-      //await saveSubmission(submission);
-      //await incrementGlobalStat('reports');
+      // Step 4: Get announcement and friends data
+      const [announcementResponse, friendsResponse] = await Promise.all([
+        getAnnouncement(),
+        getFriends(submission.reportId)
+      ])
 
-      // Step 5: Clear audit store for next session
-      useAuditStore.getState().clearResponses();
+      const announcement = announcementResponse.success ? announcementResponse.announcement : null
+      const friends = friendsResponse.success ? friendsResponse.friends : []
 
-      setSubmitted(true);
+      // Step 5: Save to sessionStorage (for immediate viewing)
+      sessionStorage.setItem('audit', JSON.stringify(submission))
+      sessionStorage.setItem('announcement', JSON.stringify(announcement))
+      sessionStorage.setItem('friends', JSON.stringify(friends))
+
+      // Notify header about session change
+      window.dispatchEvent(new Event('audit-session-change'))
+      // Step 6: Update local state
+      setActiveSubmission(submission)
+
+      // Step 7: Clear audit store for next session
+      useAuditStore.getState().clearResponses()
+
+      setSubmitted(true)
 
     } catch (err) {
-      console.error("Error submitting audit & contact info:", err);
+      console.error("Error submitting audit & contact info:", err)
+      setError(err instanceof Error ? err.message : 'An error occurred. Please try again.')
     } finally {
-      setIsAnalyzing(false);
+      setIsAnalyzing(false)
     }
-  };
-
-  if (submitted) {
-    return <ThankYouClient contactInfo={contactInfo} />;
   }
 
-  return <ContactForm onSubmit={handleContactSubmit} isAnalyzing={isAnalyzing} />;
+  if (submitted && activeSubmission) {
+    return <ThankYouClient contactInfo={contactInfo} submission={activeSubmission} />
+  }
+
+  return (
+    <>
+      {error && (
+        <div className="mb-4 p-4 bg-red-50 text-red-600 rounded-lg border border-red-200">
+          {error}
+        </div>
+      )}
+      <ContactForm onSubmit={handleContactSubmit} isAnalyzing={isAnalyzing} />
+    </>
+  )
 }

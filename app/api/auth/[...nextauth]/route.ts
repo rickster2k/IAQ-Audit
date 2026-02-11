@@ -1,8 +1,7 @@
-import NextAuth from 'next-auth'
+// app/api/auth/[...nextauth]/route.ts
+import NextAuth, { NextAuthOptions } from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
 import admin from 'firebase-admin'
-
-
 
 /*Firebase auth*/
 declare module 'next-auth' {
@@ -25,7 +24,7 @@ if (!admin.apps.length) {
   })
 }
 
-export const handler = NextAuth({
+export const authOptions: NextAuthOptions = {
   session: {
     strategy: 'jwt',
     maxAge: 30 * 60, // 30 minutes in seconds 
@@ -90,6 +89,8 @@ export const handler = NextAuth({
       return session
     },
   },
-})
+}
+
+const handler = NextAuth(authOptions)
 
 export { handler as GET, handler as POST }

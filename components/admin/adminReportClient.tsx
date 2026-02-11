@@ -6,10 +6,12 @@ import { Announcement, Submission } from '@/lib/types'
 interface AdminReportClientProps {
   submission: Submission
   announcement: Announcement
-  friends: Submission[]
+  friends: Submission[],
+  updateViewState: (view:'AuditList'| 'AuditView' ) => void,
+  setFocusedSubmissionId: (id: string | null ) => void
 }
 
-export default function AdminReportClient({ submission, announcement, friends }: AdminReportClientProps) {
+export default function AdminReportClient({ submission, announcement, friends, updateViewState, setFocusedSubmissionId }: AdminReportClientProps) {
 
   if (!submission) {
     notFound()
@@ -26,12 +28,16 @@ export default function AdminReportClient({ submission, announcement, friends }:
           IAQ Assessment Report
         </h1>
 
-        <Link
-          href="/admin"
+        <button
+          onClick={() => {
+
+            updateViewState("AuditList")
+            setFocusedSubmissionId(null)
+          }}
           className="text-sm text-slate-600 hover:underline"
         >
-          ← Back to dashboard
-        </Link>
+          ← Back to Audit List
+        </button>
       </div>
 
       {/* Metadata */}

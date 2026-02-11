@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { GlobalStats, Submission, SupportSubmission } from '@/lib/types'
 import AdminDashboardDisplay from './adminDashboardClient'
 import AdminReportClient from './adminReportClient'
@@ -9,6 +9,9 @@ import AdminAuditTab from './adminAuditTab'
 import AdminSettingsTab from './adminSettingsTab'
 import AdminAnnouncementTab from './adminAnouncementTab'
 import AdminSupportTab from './adminSupportTab'
+import { getAuth, signInWithCustomToken } from 'firebase/auth'
+import { app } from '@/lib/services/firebase'
+import { getFirebaseCustomToken } from '@/app/actions/getFirebaseAdminToken'
 
 interface DashboardProps {
   submissions: Submission[],
@@ -21,10 +24,9 @@ export default function AdminDashboard({
   stats,
   helpDeskList
 }: DashboardProps) {
-
+  
+  const [firebaseReady, setFirebaseReady] = useState(false)
   const [viewState, updateViewState] = useState<'audits'| 'support' | 'announcements' | 'settings'>('audits')
-
-
   const [submissionSelected, setSubmissionSelected] = useState<Submission | null>(null)
 
   const friendsOfSelected = useMemo(() => {
@@ -32,6 +34,24 @@ export default function AdminDashboard({
     return submissions.filter(s => s.referredBy === submissionSelected.id)
   }, [submissionSelected, submissions])
 
+  useEffect(() => {
+    async function initFirebase() {
+      try {
+        const result = await getFirebaseCustomToken()
+        
+        if (result.success && result.token) {
+          const auth = await getAuth(app)
+          await signInWithCustomToken(auth, result.token)
+          setFirebaseReady(true)
+          console.log('Firebase Auth ready')
+        }
+      } catch (error) {
+        console.error('Firebase auth error:', error)
+      }
+    }
+
+    initFirebase()
+  }, [])
   return (
     
     <div className='max-w-7xl mx-auto p-6 space-y-8'>
@@ -40,7 +60,7 @@ export default function AdminDashboard({
       <div className='flex flex-col'>
           <AdminTabSelector setter={(tab: string) => updateViewState(tab as 'audits'| 'support' | 'announcements' | 'settings')} activeTab={viewState} />
 
-          {viewState === 'audits' && (<AdminAuditTab  submissions={submissions}/>) }
+          {viewState === 'audits' && (<AdminAuditTab  submissions={submissions} submissionSelected={submissionSelected} setSubmissionSelected={setSubmissionSelected} announcement={stats.announcement} friendsOfSelected={friendsOfSelected}/>) }
           {viewState ==='settings' && (<AdminSettingsTab globalStats={stats}/>) }
           {viewState === 'announcements' && (<AdminAnnouncementTab globalStats={stats}/>)}
           {viewState === 'support' && (<AdminSupportTab helpDeskList={helpDeskList}/>)}
@@ -49,16 +69,6 @@ export default function AdminDashboard({
       
 
 
-      
-      { (
-        submissionSelected ? (
-          <AdminReportClient submission={submissionSelected} announcement={stats.announcement} friends={friendsOfSelected}/>
-        ) : (
-          <div className="p-6 text-center text-slate-500">
-                    No report found.
-          </div>
-        )
-      )}
     </div>
     
   )

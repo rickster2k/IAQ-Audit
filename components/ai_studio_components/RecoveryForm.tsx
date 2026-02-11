@@ -1,12 +1,11 @@
 
+'use client'
+import Link from 'next/link';
 import React, { useState } from 'react';
 
-interface RecoveryFormProps {
-  onBack: () => void;
-  onSubmitRecovery: (email: string) => Promise<boolean>;
-}
 
-export const RecoveryForm: React.FC<RecoveryFormProps> = ({ onBack, onSubmitRecovery }) => {
+
+export default function  RecoveryForm()  {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState(false);
@@ -15,8 +14,9 @@ export const RecoveryForm: React.FC<RecoveryFormProps> = ({ onBack, onSubmitReco
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Attempt recovery via App.tsx logic
-    await onSubmitRecovery(email);
+    // TODO: Attempt recovery via grabbing audit id from servaraction searching via email  and if exsits send recovery email to user 
+    //await onSubmitRecovery(email);
+    console.log("AI Failure Fix Me Here (Add Recovery Functionalty Here")
     
     // Show success message regardless of whether it was found (security best practice)
     setSuccessMessage(true);
@@ -41,12 +41,12 @@ export const RecoveryForm: React.FC<RecoveryFormProps> = ({ onBack, onSubmitReco
             <div className="bg-teal-50 border border-teal-200 text-[#0d9488] p-6 rounded-2xl font-bold text-sm leading-relaxed mb-6">
                 If you submitted a valid email address associated with an active IAQ Audit Report, then your IAQ Audit Report Welcome email with your ID # has been resent to you.
             </div>
-            <button
-                onClick={onBack}
+            <Link
+                href="/user"
                 className="bg-[#1e3a5f] hover:bg-[#2d5485] text-white font-bold py-3 px-8 rounded-xl shadow-md transition-all transform hover:-translate-y-1"
             >
                 Back to Sign In
-            </button>
+            </Link>
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -72,13 +72,12 @@ export const RecoveryForm: React.FC<RecoveryFormProps> = ({ onBack, onSubmitReco
           </button>
           
           <div className="text-center pt-2">
-            <button
-              type="button"
-              onClick={onBack}
+            <Link
+              href="/login/user"
               className="text-slate-400 hover:text-slate-600 text-sm font-medium underline"
             >
               Cancel
-            </button>
+            </Link>
           </div>
         </form>
       )}

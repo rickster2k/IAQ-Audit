@@ -1,10 +1,56 @@
 'use client'
 import Link from 'next/link'
 import { signOut, useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 export default function Header() {
     const { data: session } = useSession()
     const isAdmin = session?.user?.admin === true
+    const router = useRouter()
+
+
+    // Track if user has audit data in sessionStorage
+    const [hasAuditData, setHasAuditData] = useState(false)
+
+    useEffect(() => {
+      // Check if user has active audit session
+      const checkAuditSession = () => {
+        const auditData = sessionStorage.getItem('audit')
+        setHasAuditData(!!auditData)
+      }
+
+      checkAuditSession()
+
+      // Listen for storage changes (when user logs in/out)
+      window.addEventListener('storage', checkAuditSession)
+      
+      // Custom event for same-tab updates
+      window.addEventListener('audit-session-change', checkAuditSession)
+
+      return () => {
+        window.removeEventListener('storage', checkAuditSession)
+        window.removeEventListener('audit-session-change', checkAuditSession)
+      }
+    }, [])
+
+    const handleSignOut = () => {
+      if (isAdmin) {
+        signOut({ callbackUrl: '/' })
+      } else if (hasAuditData) {
+        // Clear audit session
+        sessionStorage.removeItem('audit')
+        sessionStorage.removeItem('announcement')
+        sessionStorage.removeItem('friends')
+        setHasAuditData(false)
+        
+        // Dispatch custom event for other components
+        window.dispatchEvent(new Event('audit-session-change'))
+        
+        // Redirect to home
+        router.push('/')
+      }
+    }
 
   return (
     <header className="bg-white border-b border-slate-100 py-3 px-4 sticky top-0 z-50 shadow-sm">
@@ -61,10 +107,10 @@ export default function Header() {
         <div className="flex items-center justify-end gap-6 order-3">
           {!isAdmin && (
             <button
-              onClick={() => session ? signOut({ callbackUrl: '/' }) : undefined}
+              onClick={() => session || hasAuditData ? handleSignOut() : router.replace('/login/user')}
               className="text-sm font-bold text-slate-400 hover:text-[#1e3a5f]"
             >
-              {session ? 'Sign Out' : 'Sign In'}
+              {session || hasAuditData  ? 'Sign Out' : 'Sign In'}
             </button>
           )}
         </div>

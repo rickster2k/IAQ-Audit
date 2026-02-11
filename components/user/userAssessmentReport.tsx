@@ -5,7 +5,7 @@ import AssessmentReport from "../ai_studio_components/AssessmentReport"
 
 type UserAssessmentReportProps = {
     submission: Submission,
-    announcement: Announcement,
+    announcement: Announcement | null,
     friends: Submission[],
 }
 export default function UserAssessmentReport({submission, announcement, friends}: UserAssessmentReportProps){

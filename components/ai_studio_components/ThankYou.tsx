@@ -1,13 +1,13 @@
 
-import React from 'react';
-import { ContactInfo } from '@/lib/types';
+import { ContactInfo, Submission } from '@/lib/types';
 import Link from 'next/link';
 
 interface ThankYouProps {
-  contact: ContactInfo;
+  contact: ContactInfo,
+  submission: Submission
 }
 
-export const ThankYou: React.FC<ThankYouProps> = ({ contact }) => {
+export default function ThankYou({ contact, submission }:ThankYouProps)  {
   return (
     <div className="max-w-2xl mx-auto text-center fade-in bg-white p-10 rounded-3xl shadow-xl border border-slate-100 mt-10">
       <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -24,6 +24,12 @@ export const ThankYou: React.FC<ThankYouProps> = ({ contact }) => {
         <p className="text-slate-700 text-lg leading-relaxed">
           Thanks <span className="font-bold">{contact.firstName}</span>. Your Audit Report has been generated and has been emailed as an attachment to: <span className="font-bold text-[#0d9488]">{contact.email}</span>
         </p>
+
+         <div className="bg-white p-4 rounded-lg border border-slate-200">
+          <p className="text-sm text-slate-600 mb-2">Your Report ID:</p>
+          <p className="text-2xl font-mono font-bold text-[#1e3a5f]">{submission.reportId}</p>
+          <p className="text-xs text-slate-500 mt-2">Save this ID to access your report later</p>
+        </div>
         <p className="text-slate-700 text-lg mt-6 italic leading-relaxed">
           <span className="text-red-600 font-bold underline mr-1">IMPORTANT:</span> If you don't see the report in your inbox, please check your spam folder or promotions folder.
         </p>

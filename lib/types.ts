@@ -96,7 +96,7 @@ export interface Submission {
   referredBy: string | null; // ID of the submission that referred this one
   premiumDoc?: {
     name: string;
-    data: string; // base64 encoded string
+    url: string; // url pointing to location it is stored
   };
 }
 

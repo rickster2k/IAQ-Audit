@@ -1,14 +1,16 @@
 'use client'
 import { useState, useMemo } from 'react';
 import { AssessmentResult, ContactInfo, Submission } from '@/lib/types';
-import { sectionExplanations } from '@/components/data/sectionInfo';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { sectionExplanations } from '../data/sectionInfo';
+import { FileText, ExternalLink } from 'lucide-react'
 
 interface AssessmentReportProps {
   result: AssessmentResult;
   contact: ContactInfo;
   reportId: string;
-  announcement: {text:string, url:string};
+  announcement: {text:string, url:string} | null;
   friends: Submission[];
   isDashboardView?: boolean;
   activeSubmission?: Submission | null;
@@ -23,7 +25,7 @@ export default function AssessmentReport({
   isDashboardView = false,
   activeSubmission = null
 }: AssessmentReportProps){ 
-  
+  const router = useRouter()
   const [inviteSuccess, setInviteSuccess] = useState(false);
   const friendsAverageScore = useMemo(() => {
     if (friends.length === 0) return 0;
@@ -118,13 +120,23 @@ export default function AssessmentReport({
 
   const handleDownloadPremium = () => {
     if (!activeSubmission?.premiumDoc) return;
-    const link = document.createElement('a');
-    link.href = activeSubmission.premiumDoc.data;
-    link.download = activeSubmission.premiumDoc.name;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    window.open(activeSubmission.premiumDoc.url, '_blank');
   };
+
+  const handleSignOut = () => {
+    
+      // Clear audit session
+      sessionStorage.removeItem('audit')
+      sessionStorage.removeItem('announcement')
+      sessionStorage.removeItem('friends')
+      
+      // Dispatch custom event for other components
+      window.dispatchEvent(new Event('audit-session-change'))
+      
+      // Redirect to home
+      router.push('/')
+  }
+  
 
   return (
     <div className="w-full max-w-4xl mx-auto fade-in pb-12">
@@ -155,7 +167,7 @@ export default function AssessmentReport({
               </div>
             )}
         </div>
-        {isDashboardView && <p className="text-[#0d9488] font-bold mt-2">[ ARCHIVE VIEW ]</p>}
+        
       </div>
 
       {activeSubmission?.premiumDoc && (
@@ -175,10 +187,8 @@ export default function AssessmentReport({
                 </div>
               </div>
               <button onClick={handleDownloadPremium} className="bg-[#1e3a5f] hover:bg-[#2d5485] text-white px-8 py-3 rounded-xl font-bold transition-all shadow-md flex items-center gap-2 shrink-0 group">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 group-hover:translate-y-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                </svg>
-                Download PDF
+                <FileText className="w-4 h-4" />
+                View Premium Report
               </button>
             </div>
           </div>
@@ -332,7 +342,8 @@ export default function AssessmentReport({
       </div>
 
       <div className="mt-12 text-center">
-        {isDashboardView ? (<Link href="/admin" className='text-slate-500 hover:text-[#1e3a5f] underline transition-colors' >Back to Admin Dashboard </Link> ) : ( <Link href="/" className='text-slate-500 hover:text-[#1e3a5f] underline transition-colors'>Start New Audit (Warning Will Sign Out of Current Audit)</Link>)}
+        {!isDashboardView && <button onClick={handleSignOut} className='text-slate-500 hover:text-[#1e3a5f] underline transition-colors'>Start New Audit (Warning Will Sign Out of Current Audit)</button>}
+        {/*isDashboardView ? (<Link href="/admin" className='text-slate-500 hover:text-[#1e3a5f] underline transition-colors' >Back to Admin Dashboard </Link> ) : ( <button onClick={handleSignOut} className='text-slate-500 hover:text-[#1e3a5f] underline transition-colors'>Start New Audit (Warning Will Sign Out of Current Audit)</button>) */}
       </div>
     </div>
   );

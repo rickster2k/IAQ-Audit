@@ -1,5 +1,4 @@
 import { GlobalStats, Submission } from "@/lib/types";
-import { useMemo } from "react";
 import { signOut } from 'next-auth/react'
 
 
@@ -7,15 +6,7 @@ type AdminDashboardDisplayProps = {
     stats: GlobalStats,
     submissions: Submission[]
 }
-export default function AdminDashboardClient({stats, submissions}: AdminDashboardDisplayProps){
-
-    const averageRiskScore = useMemo(() => {
-        if (!submissions.length) return '0.0'
-        const total = submissions.reduce((sum, sub) => sum + sub.result.score, 0)
-        return (total / submissions.length).toFixed(1)
-    }, [submissions])
-
-
+export default function AdminDashboardClient({stats}: AdminDashboardDisplayProps){
 
     return (
     <div className="flex flex-col gap-8">
@@ -38,7 +29,7 @@ export default function AdminDashboardClient({stats, submissions}: AdminDashboar
         <Stat label="Visits" value={stats.visits} />
         <Stat label="Starts" value={stats.starts} />
         <Stat label="Reports" value={stats.reports} />
-        <Stat label="Avg Risk Score" value={averageRiskScore} />
+        <Stat label="Avg Risk Score" value={stats.avgScore} />
       </div>
 
         
