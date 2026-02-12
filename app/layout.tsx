@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import ThemeController from "@/components/theme/themeController";
-import { ThemeProvider } from "@/components/theme/themeProvider";
+
 import Header from "@/components/shared/header";
 import Footer from "@/components/shared/footer";
 import SessionProviders from "@/components/providers/sessionProvider";
+import ConditionalPopUpHeader from "@/components/home_components/popHeaderClient";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,6 +34,7 @@ export default function RootLayout({
       >
         <SessionProviders>
           {/*<ThemeProvider>*/}
+          <ConditionalPopUpHeader/>
           <Header />
 
           <main className="grow">

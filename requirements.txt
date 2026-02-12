@@ -1,9 +1,0 @@
-firebase
-firebase-admin
-tw-animate-css
-zustand
-@google/genai
-dotenv
-next-auth
-@emailjs/browser
-lucide-react

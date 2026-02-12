@@ -10,8 +10,9 @@ interface LandingPageProps {
 }
 
 export default function LandingPageMain({  reportCount = 0,}: LandingPageProps) {
-  const baseCount = 53_221
-  const totalReports = (baseCount + reportCount).toLocaleString()
+
+  const baseCount:number = 53221
+  const totalReports = (baseCount + reportCount)
 
 
   const avatars = [
