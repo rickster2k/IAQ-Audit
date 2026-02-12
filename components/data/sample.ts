@@ -30,6 +30,6 @@ export const submissionExample: Submission =  {
     referredBy: null,
     premiumDoc: {
         name: "string",
-        data: "string",
+        url: "string",
     }
 };

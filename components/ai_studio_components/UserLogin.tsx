@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Submission } from '../types';
+import { Submission } from '@/lib/types';
 
 interface UserLoginProps {
   onLoginSuccess: (submission: Submission) => void;

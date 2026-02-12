@@ -1,9 +1,9 @@
 'use client'
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { SupportSubmission } from '@/lib/types';
-//import { saveSupportRequest } from '../services/firebaseService';
 import Link from 'next/link';
 import Slider from '../shared/slider';
+import { addSupportRequest } from '@/app/actions/addSupportRequest';
 
 
 
@@ -18,12 +18,7 @@ export default function ContactSupport() {
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
-  const [sliderPos, setSliderPos] = useState(0);
-  const sliderRef = useRef<HTMLDivElement>(null);
 
-  const SLIDER_WIDTH = 280;
-  const HANDLE_SIZE = 48;
-  const MAX_POS = SLIDER_WIDTH - HANDLE_SIZE - 8;
 
   const subjects = [
     "Technical Issue With This Website",
@@ -31,18 +26,7 @@ export default function ContactSupport() {
     "Partnership/Sales Inquiry",
     "Other"
   ];
-
-  const handleStart = () => setIsVerified(false);
-  const handleMove = (e: MouseEvent | TouchEvent) => {
-    if (!sliderRef.current || isVerified) return;
-    const clientX = 'touches' in e ? e.touches[0].clientX : (e as MouseEvent).clientX;
-    const rect = sliderRef.current.getBoundingClientRect();
-    let newPos = clientX - rect.left - HANDLE_SIZE / 2;
-    newPos = Math.max(0, Math.min(newPos, MAX_POS));
-    setSliderPos(newPos);
-    if (newPos >= MAX_POS * 0.95) { setIsVerified(true); setSliderPos(MAX_POS); }
-  };
-
+ 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isVerified) return;
@@ -50,11 +34,19 @@ export default function ContactSupport() {
     const request: SupportSubmission = {
       id: crypto.randomUUID(),
       timestamp: new Date().toISOString(),
-      ...formData
+      ...formData,
+      status: 'new'
     };
 
-    await saveSupportRequest(request);
+    const res = await addSupportRequest(request);
+    if( res.success){
+      alert("Your request has been submitted successfully! We will get back to you soon. Thank you for reaching out to us.")
+    }
+    else{
+      alert("It seems the website is having an issue. Please try again later.")
+    }
     setIsSubmitted(true);
+    
   };
 
   if (isSubmitted) {
@@ -81,17 +73,6 @@ export default function ContactSupport() {
         </select>
         <textarea required className="w-full h-32 p-3 border rounded-xl" placeholder="Message..." value={formData.message} onChange={(e) => setFormData({...formData, message: e.target.value})} />
         
-        {/*<div className="flex flex-col items-center gap-3">
-          <div ref={sliderRef} className="relative h-14 w-72 bg-slate-100 rounded-full border p-1 overflow-hidden" onTouchMove={(e) => handleMove(e as any)} onMouseMove={(e) => handleMove(e as any)}>
-             <div className={`absolute inset-0 flex items-center justify-center text-[10px] font-black tracking-widest ${isVerified ? 'text-green-600' : 'text-slate-400'}`}>
-               {isVerified ? 'VERIFIED' : 'SLIDE TO VERIFY'}
-             </div>
-             <div className={`absolute top-1 left-1 h-12 w-12 rounded-full flex items-center justify-center bg-[#1e3a5f] text-white`} style={{ transform: `translateX(${sliderPos}px)` }}>
-               →
-             </div>
-          </div>
-        </div>*/}
-
         <Slider onVerify={() => {setIsVerified(true)}}/>
 
         <button type="submit" disabled={!isVerified} className={`w-full py-4 rounded-xl font-bold ${isVerified ? 'bg-[#1e3a5f] text-white' : 'bg-slate-200 text-slate-400'}`}>Submit Request</button>

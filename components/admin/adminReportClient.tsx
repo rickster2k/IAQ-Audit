@@ -1,5 +1,4 @@
 import { notFound } from 'next/navigation'
-import Link from 'next/link'
 import AssessmentReport from '@/components/ai_studio_components/AssessmentReport'
 import { Announcement, Submission } from '@/lib/types'
 
@@ -76,7 +75,7 @@ export default function AdminReportClient({ submission, announcement, friends, u
         <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
           <h2 className="font-bold mb-2">Professional Review</h2>
           <p>{submission.premiumDoc.name}</p>
-           <p>{submission.premiumDoc.data}</p>
+           <p>{submission.premiumDoc.url}</p>
         </div>
       )}
     </div>

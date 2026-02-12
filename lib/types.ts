@@ -83,6 +83,7 @@ export interface SupportSubmission {
   reportId?: string;
   subject: string;
   message: string;
+  status: string;
 }
 
 // Collection: audits

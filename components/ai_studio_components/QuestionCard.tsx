@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Question, Option } from '../types.ts';
+import { Question, Option } from '@/lib/types';
 
 interface QuestionCardProps {
   question: Question;
