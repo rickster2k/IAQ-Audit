@@ -13,18 +13,35 @@ declare module 'next-auth' {
   }
 }
 
-// Init Admin SDK ONCE
-if (!admin.apps.length) {
-  admin.initializeApp({
+
+// Lazy initialization function - only runs when called
+function initializeFirebaseAdmin() {
+  if (admin.apps.length) {
+    return admin.app(); // Already initialized
+  }
+
+  const projectId = process.env.FIREBASE_ADMIN_PROJECT_ID;
+  const clientEmail = process.env.FIREBASE_ADMIN_CLIENT_EMAIL;
+  const privateKey = process.env.FIREBASE_ADMIN_PRIVATE_KEY;
+
+  // Validate at runtime, not build time
+  if (!projectId || !clientEmail || !privateKey) {
+    throw new Error(
+      'Missing Firebase Admin credentials. Please set FIREBASE_ADMIN_PROJECT_ID, FIREBASE_ADMIN_CLIENT_EMAIL, and FIREBASE_ADMIN_PRIVATE_KEY.'
+    );
+  }
+
+  return admin.initializeApp({
     credential: admin.credential.cert({
-      projectId: process.env.FIREBASE_ADMIN_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
-      privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+      projectId,
+      clientEmail,
+      privateKey: privateKey.replace(/\\n/g, '\n'),
     }),
-  })
+  });
 }
 
 export const authOptions: NextAuthOptions = {
+  secret: process.env.NEXTAUTH_SECRET,
   session: {
     strategy: 'jwt',
     maxAge: 30 * 60, // 30 minutes in seconds 
@@ -40,6 +57,8 @@ export const authOptions: NextAuthOptions = {
         if (!credentials?.email || !credentials.password) return null
 
         try {
+          // Initialize Firebase Admin here (at request time, not build time)
+          initializeFirebaseAdmin();
           // 🔥 Verify user via Firebase REST API
           const res = await fetch(
             `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${process.env.NEXT_PUBLIC_FIREBASE_API_KEY}`,
@@ -54,14 +73,19 @@ export const authOptions: NextAuthOptions = {
             }
           )
 
-          if (!res.ok) return null
+          if (!res.ok) {
+            const errorData = await res.json();           
+            console.error('Firebase auth error:', errorData);  
+            return null;
+          }
 
           const data = await res.json()
 
-          // 🔐 Verify claims server-side
+          // Verify claims server-side
           const decoded = await admin.auth().verifyIdToken(data.idToken)
 
           if (!decoded.admin) {
+            console.log('User is not an admin:', decoded.email);
             throw new Error('Not an admin')
           }
 
