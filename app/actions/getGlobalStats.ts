@@ -1,12 +1,12 @@
 
 'use server'
 
-import { adminDb } from '@/lib/services/firebaseAdmin'
-import { GlobalStats, Submission } from '@/lib/types'
+import { getAdminDb } from '@/lib/services/firebaseAdmin'
+import { GlobalStats } from '@/lib/types'
 
 export async function GetGlobalStats() {
   try {
-    
+    const adminDb = getAdminDb()
 
     // Query all submissions where referredBy equals the given reportId
     const snapshot = await adminDb

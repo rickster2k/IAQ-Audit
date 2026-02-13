@@ -1,10 +1,11 @@
 'use server'
 
-import { adminDb } from '@/lib/services/firebaseAdmin'
+import {  getAdminDb } from '@/lib/services/firebaseAdmin'
 import { SupportSubmission } from '@/lib/types'
 
 export async function addSupportRequest(  supportRequest: SupportSubmission) {
   try {
+    const adminDb = getAdminDb()
     const docRef = await adminDb.collection('helpDesk').add({
       ...supportRequest,
     })

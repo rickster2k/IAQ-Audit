@@ -1,6 +1,6 @@
 'use server'
 
-import { adminDb } from '@/lib/services/firebaseAdmin'
+import { getAdminDb } from '@/lib/services/firebaseAdmin'
 
 export async function updateSubmission(
   submissionId: string,
@@ -8,6 +8,7 @@ export async function updateSubmission(
   pdfName: string
 ) {
   try {
+    const adminDb = getAdminDb()
     const submissionRef = adminDb.collection('submissions').doc(submissionId)
     
     await submissionRef.update({

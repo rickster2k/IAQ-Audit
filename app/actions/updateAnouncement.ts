@@ -1,10 +1,11 @@
 // app/actions/updateAnnouncement.ts
 'use server'
 
-import { adminDb } from '@/lib/services/firebaseAdmin'
+import { getAdminDb } from '@/lib/services/firebaseAdmin'
 
 export async function updateAnnouncement(text: string, url: string) {
   try {
+    const adminDb = getAdminDb()
     const statsRef = adminDb.collection('globalStats').doc('stats')
     
     await statsRef.update({

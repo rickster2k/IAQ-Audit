@@ -1,8 +1,7 @@
 // app/api/auth/[...nextauth]/route.ts
 import NextAuth, { NextAuthOptions } from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
-import admin from 'firebase-admin'
-
+import {getAdminAuth} from '@/lib/services/firebaseAdmin'
 /*Firebase auth*/
 declare module 'next-auth' {
   interface Session {
@@ -15,7 +14,7 @@ declare module 'next-auth' {
 
 
 // Lazy initialization function - only runs when called
-function initializeFirebaseAdmin() {
+/*function initializeFirebaseAdmin() {
   if (admin.apps.length) {
     return admin.app(); // Already initialized
   }
@@ -38,7 +37,7 @@ function initializeFirebaseAdmin() {
       privateKey: privateKey.replace(/\\n/g, '\n'),
     }),
   });
-}
+}*/
 
 export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
@@ -58,8 +57,8 @@ export const authOptions: NextAuthOptions = {
 
         try {
           // Initialize Firebase Admin here (at request time, not build time)
-          initializeFirebaseAdmin();
-          // 🔥 Verify user via Firebase REST API
+          //initializeFirebaseAdmin();
+          // Verify user via Firebase REST API
           const res = await fetch(
             `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${process.env.NEXT_PUBLIC_FIREBASE_API_KEY}`,
             {
@@ -82,7 +81,8 @@ export const authOptions: NextAuthOptions = {
           const data = await res.json()
 
           // Verify claims server-side
-          const decoded = await admin.auth().verifyIdToken(data.idToken)
+          const adminAuth = getAdminAuth()
+          const decoded = await adminAuth.verifyIdToken(data.idToken)
 
           if (!decoded.admin) {
             console.log('User is not an admin:', decoded.email);

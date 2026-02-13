@@ -1,6 +1,6 @@
 'use server'
 
-import { adminDb } from '@/lib/services/firebaseAdmin'
+import { getAdminDb } from '@/lib/services/firebaseAdmin'
 import { Submission } from '@/lib/types'
 
 export async function verifyAuditAccess(email: string, reportId: string) {
@@ -13,7 +13,8 @@ export async function verifyAuditAccess(email: string, reportId: string) {
     console.log("normalizedReportId:", normalizedReportId)
     console.log("Checking Firestore for matching submission...")
 
-
+    const adminDb = getAdminDb()
+    
     const snapshot = await adminDb
       .collection('submissions')
       .where('contact.email', '==', normalizedEmail)

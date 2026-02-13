@@ -1,4 +1,4 @@
-import { adminDb } from '@/lib/services/firebaseAdmin'
+import { getAdminDb } from '@/lib/services/firebaseAdmin' 
 import { Submission, SupportSubmission } from '@/lib/types'
 
 /**
@@ -6,6 +6,7 @@ import { Submission, SupportSubmission } from '@/lib/types'
  */
 export async function saveSubmission(submission: Submission): Promise<void> {
   try {
+    const adminDb = getAdminDb()
     await adminDb
       .collection('submissions')
       .doc(submission.id)
@@ -25,6 +26,7 @@ export async function incrementGlobalStat(
   statName: 'visits' | 'starts' | 'reports'
 ): Promise<void> {
   try {
+    const adminDb = getAdminDb()
     const docRef = adminDb.collection('globalStats').doc('stats')
     
     // Get current value
@@ -58,6 +60,7 @@ export async function incrementGlobalStat(
  */
 export async function updateAverageScore(newScore: number): Promise<void> {
   try {
+    const adminDb = getAdminDb()
     const docRef = adminDb.collection('globalStats').doc('stats')
     const doc = await docRef.get()
     
@@ -94,6 +97,7 @@ export async function updateAverageScore(newScore: number): Promise<void> {
  */
 export async function saveSupportTicket(ticket: SupportSubmission): Promise<void> {
   try {
+    const adminDb = getAdminDb()
     await adminDb
       .collection('helpdesk')
       .doc(ticket.id)

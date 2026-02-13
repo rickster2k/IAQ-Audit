@@ -1,11 +1,12 @@
 'use server'
 
-import { adminDb } from '@/lib/services/firebaseAdmin'
+import { getAdminDb } from '@/lib/services/firebaseAdmin'
 import { Announcement } from '@/lib/types'
 import { Submission } from '@/lib/types'
 
 export async function getAnnouncement() {
   try {
+    const adminDb = getAdminDb()
     const doc = await adminDb
       .collection('globalStats')
       .doc('stats')
@@ -51,6 +52,7 @@ export async function getAnnouncement() {
 export async function getFriends(reportId: string) {
   try {
     const normalizedReportId = reportId.trim().toUpperCase()
+    const adminDb = getAdminDb()
 
     // Query all submissions where referredBy equals the given reportId
     const snapshot = await adminDb

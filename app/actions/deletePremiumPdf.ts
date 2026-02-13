@@ -1,6 +1,6 @@
 'use server'
 
-import { adminStorage } from "@/lib/services/firebaseAdmin";
+import { getAdminStorage } from "@/lib/services/firebaseAdmin";
 
 
 
@@ -13,6 +13,7 @@ console.log("Searching for pdfs with submissionId: ", submissionId, " name: ", p
             throw new Error("FIREBASE_STORAGE_BUCKET not defined")
         }
 
+        const adminStorage = getAdminStorage()
         const bucket = adminStorage.bucket(bucketName)
 
         // Ensure no duplicate .pdf extension

@@ -1,6 +1,6 @@
 'use server'
 
-import { adminStorage } from "@/lib/services/firebaseAdmin";
+import { getAdminStorage } from "@/lib/services/firebaseAdmin";
 
 
 
@@ -8,6 +8,7 @@ export async function getUploadedPdfsForSubmission(submissionId: string) {
     console.log("Searching for pdfs with submissionId: ", submissionId)
   try {
     const bucketName = process.env.FIREBASE_STORAGE_BUCKET;
+    const adminStorage = getAdminStorage()
     const bucket = adminStorage.bucket(bucketName)
     const [files] = await bucket.getFiles({
       prefix: `premium-docs/${submissionId}/`,

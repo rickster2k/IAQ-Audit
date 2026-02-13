@@ -1,11 +1,12 @@
 'use server'
 
-import { adminDb } from '@/lib/services/firebaseAdmin'
+import { getAdminDb } from '@/lib/services/firebaseAdmin'
 import { Submission } from '@/lib/types'
 import { FieldValue } from 'firebase-admin/firestore'
 
 export async function updateReportsAndRiskScore() {
   try {
+    const adminDb = getAdminDb()
     await adminDb.runTransaction(async (transaction) => {
       const statsRef = adminDb.collection('globalStats').doc('stats')
       const submissionsRef = adminDb.collection('submissions')
@@ -51,6 +52,8 @@ export async function updateReportsAndRiskScore() {
 
 export async function incrementVisits() {
   try {
+    const adminDb = getAdminDb()
+
     const statsRef = adminDb.collection('globalStats').doc('stats')
 
     await statsRef.update({
@@ -71,6 +74,8 @@ export async function incrementVisits() {
 
 export async function incrementStarts() {
   try {
+    const adminDb = getAdminDb()
+
     const statsRef = adminDb.collection('globalStats').doc('stats')
 
     await statsRef.update({
@@ -90,6 +95,8 @@ export async function incrementStarts() {
 
 export async function updateAvgScore() {
   try {
+    const adminDb = getAdminDb()
+
     //  Get all submissions
     const submissionsSnapshot = await adminDb.collection('submissions').get()
     const submissions = submissionsSnapshot.docs.map(doc => doc.data() as Submission)
@@ -131,6 +138,8 @@ export async function updateAvgScore() {
 
 export async function updateShop(paymentUrl: string, pricePoint: string) {
   try {
+    const adminDb = getAdminDb()
+
     // Update globalStats document with shop info
     const statsRef = adminDb.collection('globalStats').doc('stats')
     await statsRef.update({

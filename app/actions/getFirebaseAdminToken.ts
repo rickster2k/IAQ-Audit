@@ -1,7 +1,7 @@
 // app/actions/getFirebaseToken.ts
 'use server'
 
-import { adminAuth } from '@/lib/services/firebaseAdmin'
+import { getAdminAuth } from '@/lib/services/firebaseAdmin'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 
@@ -16,6 +16,8 @@ export async function getFirebaseCustomToken() {
     // Get or create Firebase user
     let firebaseUser
     try {
+        const adminAuth = getAdminAuth()
+      
         firebaseUser = await adminAuth.getUserByEmail(session.user.email)
 
         // Set admin claim if user is admin
