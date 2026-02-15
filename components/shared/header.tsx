@@ -59,6 +59,7 @@ export default function Header() {
         {/* Logo / Home reset */}
         <Link
           href="/"
+          onClick={handleSignOut}
           className="flex items-center cursor-pointer order-2 md:order-1"
         >
           <div className="flex items-center gap-3">
@@ -107,7 +108,7 @@ export default function Header() {
         <div className="flex items-center justify-end gap-6 order-3">
           {!isAdmin && (
             <button
-              onClick={() => session || hasAuditData ? handleSignOut() : router.replace('/login/user')}
+              onClick={() => (session || hasAuditData) ? handleSignOut() : router.replace('/login/user')}
               className="text-sm font-bold text-slate-400 hover:text-[#1e3a5f]"
             >
               {session || hasAuditData  ? 'Sign Out' : 'Sign In'}

@@ -1,28 +1,26 @@
 'use client'
 import Link from 'next/link';
 import Image from 'next/image';
-import React, { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { Shop } from '@/lib/types';
 
 
 
 const PROFILE_IMAGE = "https://i.postimg.cc/bw4T48HH/Profile.png";
 const FALLBACK_IMAGE = "https://i.pravatar.cc/300?u=ericsnyder";
 
-export default function ProfessionalReview () {
-  const [paymentUrl, setPaymentUrl] = useState('');
-  const [pricePoint, setPricePoint] = useState('$49');
-  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
+type ProfessionalReviewProps = {
+  shop: Shop | undefined,
+  isAdmin: boolean
+}
 
-  useEffect(() => {
-    const url = localStorage.getItem('iaq_payment_url');
-    const price = localStorage.getItem('iaq_price_point');
-    setPaymentUrl(url || '');
-    if (price) setPricePoint(price);
-  }, []);
+export default function ProfessionalReview ({shop, isAdmin = false}: ProfessionalReviewProps ) {
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
+  const pricePoint = '$'+ shop?.pricePoint || '$49'
 
   const handleOrder = () => {
-    if (paymentUrl) {
-      window.open(paymentUrl, '_blank');
+    if (shop?.paymentUrl) {
+      window.open(shop?.paymentUrl, '_blank');
     } else {
       alert("The ordering system is currently being configured by the administrator. Please check back soon or contact support@iaqaudit.com.");
     }
@@ -165,7 +163,7 @@ export default function ProfessionalReview () {
             <h1 className="text-2xl font-bold text-[#1e3a5f]">Your Personalized Professional Review</h1>
         </div>
         <Link
-          href="/user/report"
+          href={isAdmin ? "/admin" : "/user/report"}
           className="text-slate-500 hover:text-[#1e3a5f] flex items-center gap-2 font-medium px-4 py-2 rounded-lg hover:bg-slate-50 transition-colors"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -232,7 +230,7 @@ export default function ProfessionalReview () {
                           <span className="text-slate-400 line-through decoration-slate-400 decoration-4 ml-auto">$97</span>
                       </div>
                       <div className="flex justify-between items-center font-black text-3xl pt-1 text-white border-t border-white/10 mt-2">
-                          <span className="text-sm uppercase tracking-[0.2em] text-slate-300">Today's Price</span>
+                          <span className="text-sm uppercase tracking-[0.2em] text-slate-300">Today&lsquo;s Price</span>
                           <span className="text-[#4ade80]">{pricePoint}</span>
                       </div>
                   </div>
@@ -276,7 +274,7 @@ export default function ProfessionalReview () {
 
               <div className="relative z-10 max-w-sm">
                 <p className="text-base text-slate-600 leading-relaxed italic text-center px-4">
-                    "I built this tool and created the personalized review service because I was tired of seeing families suffer from preventable air quality issues simply because professional testing and assessment services are too expensive. I’ve distilled years of field experience into this diagnostic tool and service."
+                    &ldquo;I built this tool and created the personalized review service because I was tired of seeing families suffer from preventable air quality issues simply because professional testing and assessment services are too expensive. I’ve distilled years of field experience into this diagnostic tool and service.&ldquo;
                 </p>
               </div>
           </div>
@@ -328,7 +326,7 @@ export default function ProfessionalReview () {
                 </div>
               </button>
               <div 
-                className={`overflow-hidden transition-all duration-300 ease-in-out ${openFaqIndex === i ? 'max-h-[800px] border-t border-slate-100' : 'max-h-0'}`}
+                className={`overflow-hidden transition-all duration-300 ease-in-out ${openFaqIndex === i ? 'max-h-200 border-t border-slate-100' : 'max-h-0'}`}
               >
                 <div className="px-8 py-6 text-slate-600 text-sm leading-relaxed bg-slate-50/50">
                   {faq.a}

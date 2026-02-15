@@ -17,12 +17,20 @@ interface DashboardProps {
   submissions: Submission[],
   stats: GlobalStats,
   helpDeskList: SupportSubmission[],
+  nextCursor_helpDesk: string,
+  hasMore_helpDesk: boolean,
+  nextCursor_audits:string,
+  hasMore_audits: boolean,
 }
 
 export default function AdminDashboard({
   submissions,
   stats,
-  helpDeskList
+  helpDeskList,
+  nextCursor_helpDesk,
+  hasMore_helpDesk,
+  nextCursor_audits,
+  hasMore_audits
 }: DashboardProps) {
   
   const [firebaseReady, setFirebaseReady] = useState(false)
@@ -60,10 +68,10 @@ export default function AdminDashboard({
       <div className='flex flex-col'>
           <AdminTabSelector setter={(tab: string) => updateViewState(tab as 'audits'| 'support' | 'announcements' | 'settings')} activeTab={viewState} />
 
-          {viewState === 'audits' && (<AdminAuditTab  submissions={submissions} submissionSelected={submissionSelected} setSubmissionSelected={setSubmissionSelected} announcement={stats.announcement} friendsOfSelected={friendsOfSelected}/>) }
+          {viewState === 'audits' && (<AdminAuditTab  submissions={submissions} submissionSelected={submissionSelected} setSubmissionSelected={setSubmissionSelected} announcement={stats.announcement} friendsOfSelected={friendsOfSelected} initialNextCursor={nextCursor_audits} initialHasMore={hasMore_audits}/>) }
           {viewState ==='settings' && (<AdminSettingsTab globalStats={stats}/>) }
           {viewState === 'announcements' && (<AdminAnnouncementTab globalStats={stats}/>)}
-          {viewState === 'support' && (<AdminSupportTab helpDeskList={helpDeskList}/>)}
+          {viewState === 'support' && (<AdminSupportTab helpDeskList={helpDeskList} initialNextCursor={nextCursor_helpDesk} initialHasMore={hasMore_helpDesk}/>)}
 
       </div>
       
