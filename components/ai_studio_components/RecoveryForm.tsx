@@ -1,5 +1,6 @@
 
 'use client'
+import { sendRecoveryEmail } from '@/app/actions/sendRecoveryEmail';
 import Link from 'next/link';
 import React, { useState } from 'react';
 
@@ -14,13 +15,18 @@ export default function  RecoveryForm()  {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // TODO: Attempt recovery via grabbing audit id from servaraction searching via email  and if exsits send recovery email to user 
+    // TODO: Attempt recovery via grabbing audit id from server action searching via email  and if exsits send recovery email to user 
     //await onSubmitRecovery(email);
-    console.log("AI Failure Fix Me Here (Add Recovery Functionalty Here")
-    
-    // Show success message regardless of whether it was found (security best practice)
-    setSuccessMessage(true);
-    setIsSubmitting(false);
+    try {
+      // Attempt recovery — always shows success regardless of result
+      // (security best practice: never reveal if email exists in system)
+      await sendRecoveryEmail({ toEmail: email })
+    } catch (err) {
+      console.error('Recovery email error:', err)
+    } finally {
+      setSuccessMessage(true)
+      setIsSubmitting(false)
+    }
   };
 
   return (
@@ -39,10 +45,10 @@ export default function  RecoveryForm()  {
       {successMessage ? (
         <div className="animate-fade-in text-center py-6">
             <div className="bg-teal-50 border border-teal-200 text-[#0d9488] p-6 rounded-2xl font-bold text-sm leading-relaxed mb-6">
-                If you submitted a valid email address associated with an active IAQ Audit Report, then your IAQ Audit Report Welcome email with your ID # has been resent to you.
+                If you submitted a valid email address associated with an active IAQ Audit Report, then you will be sent an email with instructions on how to log back in. 
             </div>
             <Link
-                href="/user"
+                href="/login/user"
                 className="bg-[#1e3a5f] hover:bg-[#2d5485] text-white font-bold py-3 px-8 rounded-xl shadow-md transition-all transform hover:-translate-y-1"
             >
                 Back to Sign In

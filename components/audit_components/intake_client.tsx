@@ -9,6 +9,9 @@ import { useAuditStore } from "@/lib/auditStore"
 import { saveSubmission } from "@/app/actions/saveSubmission"
 import { getAnnouncement, getFriends } from "@/app/actions/getters"
 import { analyzeIAQAssessment } from "@/app/actions/analyzeAssesmentGemini"
+import { getAuditPdfBase64 } from "@/lib/utils/generateAuditPdf"
+import { sendAuditEmail } from "@/app/actions/sendAuditEmail"
+import { toast } from "sonner"
 
 interface IntakeClientProps {
   referringReportId?: string
@@ -47,7 +50,7 @@ export default function IntakeClient({ referringReportId }: IntakeClientProps) {
         responses: uniqueResponses,
         referredBy: referringReportId || null
       }
-
+     
       // Step 3: Save to Firestore via server action
       const saveResult = await saveSubmission(submission)
 
@@ -55,6 +58,34 @@ export default function IntakeClient({ referringReportId }: IntakeClientProps) {
         throw new Error(saveResult.error || 'Failed to save submission')
       }
 
+      // Step 3b: Generate PDF and email it to the user
+      // Non-blocking — we don't want a failed email to block the user seeing results
+      getAuditPdfBase64(submission)
+        .then((pdfBase64) =>
+          sendAuditEmail({
+            toEmail:   info.email,
+            firstName: info.firstName,
+            reportId:  submission.reportId,
+            score:     result.score,
+            riskLevel: result.riskLevel,
+            pdfBase64,
+          })
+        )
+        .then((emailResult) => {
+          if (!emailResult.success) {
+            console.error('Email send failed:', emailResult.error)
+            toast.error('Your report is ready but we could not send the confirmation email. You can still download it from your report page.')
+          }
+        })
+        .catch((emailErr) => {
+          console.error('Email error details:', emailErr)
+          toast.error('Your report is ready but we could not send the confirmation email. You can still download it from your report page.')
+        })
+      /*sendAuditEmailClient(submission).catch((emailErr) => {
+        console.error('Email error details:', emailErr) 
+        toast.error('Failed to send audit email. You can still download it online')
+      })*/
+      
       // Step 4: Get announcement and friends data
       const [announcementResponse, friendsResponse] = await Promise.all([
         getAnnouncement(),

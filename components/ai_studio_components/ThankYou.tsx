@@ -31,7 +31,7 @@ export default function ThankYou({ contact, submission }:ThankYouProps)  {
           <p className="text-xs text-slate-500 mt-2">Save this ID to access your report later</p>
         </div>
         <p className="text-slate-700 text-lg mt-6 italic leading-relaxed">
-          <span className="text-red-600 font-bold underline mr-1">IMPORTANT:</span> If you don't see the report in your inbox, please check your spam folder or promotions folder.
+          <span className="text-red-600 font-bold underline mr-1">IMPORTANT:</span> If you don&lsquo;t see the report in your inbox, please check your spam folder or promotions folder.
         </p>
       </div>
 
