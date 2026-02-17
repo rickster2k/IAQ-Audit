@@ -3,8 +3,10 @@
 
 import { getAdminDb } from '@/lib/services/firebaseAdmin'
 import { GlobalStats } from '@/lib/types'
+import { unstable_noStore as noStore } from 'next/cache'
 
 export async function GetGlobalStats() {
+  noStore()
   try {
     const adminDb = getAdminDb()
 
