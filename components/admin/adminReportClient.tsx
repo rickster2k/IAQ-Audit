@@ -60,6 +60,7 @@ export default function AdminReportClient({ submission, announcement, friends, u
       {/* Assessment Report */}
       <div className="bg-white rounded-3xl shadow p-6">
         <AssessmentReport
+         submission={submission}
           result={submission.result}
           contact={submission.contact}
           reportId={submission.reportId}

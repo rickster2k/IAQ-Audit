@@ -64,8 +64,17 @@ export default function ContactForm ({ onSubmit, isAnalyzing, onShowTerms, onSho
       return;
     }
 
+    const normalizedFirstName:string = formData.firstName.trim().toLowerCase()
+    const normalizedLastName:string = formData.lastName.trim().toLowerCase()
+    const normFormData = ({
+      ...formData,
+      firstName: normalizedFirstName,
+      lastName: normalizedLastName,
+    })
+    setFormData(normFormData);
+
     if (formData.firstName && formData.lastName && formData.email && formData.zipCode && formData.country !== '---' && agreedToTerms) {
-      onSubmit(formData);
+      onSubmit(normFormData);
     }
   };
 

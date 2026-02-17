@@ -15,7 +15,7 @@ interface IntakeClientProps {
 }
 
 export default function IntakeClient({ referringReportId }: IntakeClientProps) {
-  const responses = useAuditStore((state) => state.responses)
+  const responses:UserResponse[] = useAuditStore((state) => state.responses)
   const [activeSubmission, setActiveSubmission] = useState<Submission | null>(null)
   const [contactInfo, setContactInfo] = useState<ContactInfo>({} as ContactInfo)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
@@ -28,8 +28,14 @@ export default function IntakeClient({ referringReportId }: IntakeClientProps) {
     setError(null)
 
     try {
+      // Deduplicate responses by questionId before processing
+      // (guards against double-saves from conditional question re-renders)
+      const uniqueResponses = responses.filter(
+        (r, index, self) => index === self.findIndex(x => x.questionId === r.questionId)
+      )
+
       // Step 1: Analyze audit responses using Gemini AI
-      const result: AssessmentResult = await analyzeIAQAssessment(responses as UserResponse[])
+      const result: AssessmentResult = await analyzeIAQAssessment(uniqueResponses)
 
       // Step 2: Build submission object
       const submission: Submission = {
@@ -38,7 +44,7 @@ export default function IntakeClient({ referringReportId }: IntakeClientProps) {
         timestamp: new Date().toISOString(),
         contact: info,
         result,
-        responses,
+        responses: uniqueResponses,
         referredBy: referringReportId || null
       }
 

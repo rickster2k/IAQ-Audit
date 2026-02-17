@@ -4,6 +4,9 @@ import { incrementStarts, incrementVisits } from '@/app/actions/updateGlobalStat
 import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect } from 'react'
+import WhyIAQMatters from './whyIAQMatters'
+import { HowItWorks } from './howItWorks'
+import AboutIAQ from './aboutIAQ'
 
 interface LandingPageProps {
   reportCount?: number
@@ -107,6 +110,10 @@ export default function LandingPageMain({  reportCount = 0,}: LandingPageProps) 
 
         </div>
       </section>
+
+      <WhyIAQMatters />
+      <HowItWorks />
+      <AboutIAQ/>
     </div>
   )
 }

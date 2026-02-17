@@ -12,6 +12,7 @@ export default function UserAssessmentReport({submission, announcement, friends}
     return (
     
             <AssessmentReport
+                submission={submission}
                 result={submission.result}
                 contact={submission.contact}
                 reportId={submission.reportId}
