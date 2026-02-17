@@ -14,16 +14,20 @@ export function RecoveryEmail({ reportId, firstName, submissionDate }: RecoveryE
           {/* Header */}
           <div style={{ backgroundColor: '#1e3a5f', padding: '24px 32px' }}>
             <a href="https://www.iaqaudit.com" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '12px' }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={`${process.env.NEXT_PUBLIC_APP_URL}/icon1.png`}
-                alt="IAQ Audit"
-                height={40}
-                style={{ height: '40px', verticalAlign: 'middle' }}
-              />
-              <span style={{ color: '#ffffff', fontSize: '20px', fontWeight: 700, letterSpacing: '-0.3px' }}>
-                IAQ Audit
-              </span>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                    src={`${process.env.NEXT_PUBLIC_APP_URL}/icon1.png`}
+                    alt="IAQ Audit"
+                    height={40}
+                    style={{ height: '40px', verticalAlign: 'middle' }}
+                />
+                <span style={{ color: '#ffffff', fontSize: '35px', fontWeight: 700, letterSpacing: '-0.3px' }}>
+                    IAQ 
+                    <span style={{ color: '#0d9488'}}>
+                        Audit
+                    </span>
+                </span>
+                
             </a>
           </div>
 

@@ -33,8 +33,11 @@ export function AuditResultsEmail({
                 height={40}
                 style={{ height: '40px', verticalAlign: 'middle' }}
               />
-              <span style={{ color: '#ffffff', fontSize: '20px', fontWeight: 700, letterSpacing: '-0.3px' }}>
-                IAQ Audit
+              <span style={{ color: '#ffffff', fontSize: '35px', fontWeight: 700, letterSpacing: '-0.3px' }}>
+                    IAQ 
+                    <span style={{ color: '#0d9488'}}>
+                        Audit
+                    </span>
               </span>
             </a>
           </div>
