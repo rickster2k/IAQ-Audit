@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react'
 import { updateSubmission } from '@/app/actions/updateSubmission'
 import { getUploadedPdfsForSubmission } from '@/app/actions/getAllPdfsForSubmission'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
 type PdfOption = {
   name: string
@@ -53,11 +54,11 @@ export default function PdfSelectionModal({  submissionId,  currentPdfName,  onC
       )
 
       if (result.success) {
-        alert('Premium PDF updated successfully!')
+        toast.success('Premium PDF updated successfully!')
         router.refresh()
         onClose()
       } else {
-        alert(result.error || 'Failed to update PDF')
+        toast.error(result.error || 'Failed to update PDF')
       }
     }
     setSaving(false)

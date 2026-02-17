@@ -5,9 +5,10 @@ import ContactForm from "@/components/ai_studio_components/ContactForm"
 import ThankYouClient from "@/components/audit_components/thank_you_client"
 import { ContactInfo, Submission, UserResponse, AssessmentResult } from "@/lib/types"
 import { useAuditStore } from "@/lib/auditStore"
-import { analyzeIAQAssessment } from "@/lib/services/geminiService"
+//import { analyzeIAQAssessment } from "@/lib/services/geminiService"
 import { saveSubmission } from "@/app/actions/saveSubmission"
 import { getAnnouncement, getFriends } from "@/app/actions/getters"
+import { analyzeIAQAssessment } from "@/app/actions/analyzeAssesmentGemini"
 
 interface IntakeClientProps {
   referringReportId?: string

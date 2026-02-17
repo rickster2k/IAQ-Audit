@@ -1,10 +1,12 @@
+export type RiskLevel = 'Low' | 'Moderate' | 'High' | 'Severe'
 
-
-
-
-
-
-
+export interface AuditFilters {
+  searchType: 'name' | 'email' | 'reportId' | 'riskLevel' | 'dateRange' | ''
+  searchValue: string       // used for name, email, reportId
+  riskLevel: RiskLevel | '' // used for riskLevel filter
+  dateFrom: string          // ISO date string YYYY-MM-DD, used for dateRange
+  dateTo: string            // ISO date string YYYY-MM-DD, used for dateRange
+}
 
 export interface Option {
   label: string;

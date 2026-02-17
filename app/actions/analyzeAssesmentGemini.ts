@@ -1,3 +1,4 @@
+'use server'
 import { GoogleGenAI, Type } from "@google/genai";
 import { UserResponse, AssessmentResult } from '@/lib/types';
 

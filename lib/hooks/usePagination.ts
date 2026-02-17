@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 export interface PaginatedData<T> {
   data: T[]
@@ -29,6 +29,23 @@ export function usePagination<T>({
   const [nextCursor, setNextCursor] = useState<string | null>(initialNextCursor)
   const [hasMore, setHasMore] = useState(initialHasMore)
   const [loading, setLoading] = useState(false)
+
+  const isFirstRender = useRef(true)
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false
+      return
+    }
+    // initialData changed (router.refresh() completed) — reset to page 0 with fresh data
+    setData(initialData)
+    setNextCursor(initialNextCursor)
+    setHasMore(initialHasMore)
+    setCurrentPage(0)
+    setCursorHistory([null])
+    onPageChange?.(initialData)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialData])
 
   const applyPage = (newData: T[]) => {
     setData(newData)
@@ -69,6 +86,20 @@ export function usePagination<T>({
     setLoading(false)
   }
 
+  // Called by external code to fully reset state (e.g. after filters change)
+  const resetToData = (
+    newData: T[],
+    newNextCursor: string | null,
+    newHasMore: boolean
+  ) => {
+    setData(newData)
+    setNextCursor(newNextCursor)
+    setHasMore(newHasMore)
+    setCurrentPage(0)
+    setCursorHistory([null])
+    onPageChange?.(newData)
+  }
+
   return {
     data,
     currentPage,
@@ -76,5 +107,6 @@ export function usePagination<T>({
     loading,
     handleNext,
     handlePrevious,
+    resetToData
   }
 }

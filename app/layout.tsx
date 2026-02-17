@@ -6,6 +6,7 @@ import Header from "@/components/shared/header";
 import Footer from "@/components/shared/footer";
 import SessionProviders from "@/components/providers/sessionProvider";
 import ConditionalPopUpHeader from "@/components/home_components/popHeaderClient";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,7 +41,7 @@ export default function RootLayout({
           <main className="grow">
             {children}
           </main>
-
+          <Toaster/>
           <Footer />
          {/* <ThemeController />
         </ThemeProvider>*/}

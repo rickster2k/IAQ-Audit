@@ -2,8 +2,6 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { Submission } from '@/lib/types'
-import { routerServerGlobal } from 'next/dist/server/lib/router-utils/router-server-context'
-import { useRouter } from 'next/navigation'
 
 type Props = {
   submission: Submission
@@ -15,12 +13,12 @@ type Props = {
   onSetPremium: () => void
   onDeletePremium: () => void
   onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onResetPremium: () => void
 }
 
-export default function AdminAuditActionsDropdown({  submission,  isUploading,  focusedSubmissionId,  onView,  onUploadClick,  onViewPdf,  onSetPremium,  onDeletePremium,  onFileChange}: Props) {
+export default function AdminAuditActionsDropdown({  submission,  isUploading,  focusedSubmissionId,  onView,  onUploadClick,  onViewPdf,  onSetPremium,  onDeletePremium,  onFileChange, onResetPremium}: Props) {
     const [open, setOpen] = useState(false)
     const dropdownRef = useRef<HTMLDivElement>(null)
-    const router = useRouter()
     // Close when clicking outside
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
@@ -92,9 +90,8 @@ export default function AdminAuditActionsDropdown({  submission,  isUploading,  
 
             <button
                 onClick={() => {
-                onSetPremium()
-                router.refresh()
-                setOpen(false)
+                    onSetPremium()
+                    setOpen(false)
                 }}
                 className="w-full text-left px-4 py-2 hover:bg-slate-100 "
             >
@@ -103,9 +100,18 @@ export default function AdminAuditActionsDropdown({  submission,  isUploading,  
 
             <button
                 onClick={() => {
-                onDeletePremium()
-                router.refresh()
-                setOpen(false)
+                    onResetPremium()
+                    setOpen(false)
+                }}
+                className="w-full text-left px-4 py-2 hover:bg-slate-100 "
+            >
+                Reset Premium PDF
+            </button>
+
+            <button
+                onClick={() => {
+                    onDeletePremium()
+                    setOpen(false)
                 }}
                 className="w-full text-left px-4 py-2 hover:bg-slate-100"
             >

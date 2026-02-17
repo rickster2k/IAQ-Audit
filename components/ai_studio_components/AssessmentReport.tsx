@@ -170,7 +170,7 @@ export default function AssessmentReport({
         
       </div>
 
-      {activeSubmission?.premiumDoc && (
+      {activeSubmission?.premiumDoc && (activeSubmission?.premiumDoc.name != "" && activeSubmission?.premiumDoc.url != "" ) &&  (
         <div className="mb-8 w-full animate-fade-in">
           <div className="bg-linear-to-r from-[#1e3a5f] to-[#162e4d] p-1 rounded-2xl shadow-xl">
             <div className="bg-white rounded-[0.9rem] p-6 flex flex-col md:flex-row items-center justify-between gap-6">
@@ -235,12 +235,14 @@ export default function AssessmentReport({
         </button>
       </div>
 
+      {/* --- Professional Summary Section (AI Generated) --- */}
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 mb-8">
         <h3 className="text-xl font-bold text-[#1e3a5f] mb-4 border-b pb-2">Professional Summary</h3>
         <p className="text-slate-700 leading-relaxed text-lg">{result.summary}</p>
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 mb-8">
+        {/* --- Critical Recommendations Section (AI Generated) --- */}
         <h3 className="text-xl font-bold text-[#1e3a5f] mb-6 border-b pb-2">Critical Recommendations</h3>
         <ul className="space-y-4 mb-8">
             {result.recommendations.map((rec, index) => (
@@ -259,6 +261,7 @@ export default function AssessmentReport({
       </div>
 
       <div className="bg-slate-50 rounded-2xl border border-slate-200 p-8 mb-12">
+        {/* --- Understanding Your Audit Section --- */}
         <h3 className="text-xl font-bold text-[#1e3a5f] mb-6">Understanding Your Audit</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 mb-8">
             {sectionExplanations.map((section) => (

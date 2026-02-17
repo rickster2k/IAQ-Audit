@@ -6,6 +6,7 @@ import { updateSubmission } from '@/app/actions/updateSubmission'
 import { getUploadedPdfsForSubmission } from '@/app/actions/getAllPdfsForSubmission'
 import { deletePdf } from '@/app/actions/deletePremiumPdf'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
 type PdfOption = {
   name: string
@@ -58,13 +59,13 @@ export default function PdfDeleteSelectorModal({  submissionId,  currentPdfName,
 
                 const result = await deletePdf(submissionId,selectedPdf.name)
                 if (result.success) {
-                    alert("Removed premium pdf from user audit")
+                    toast.success("Removed premium pdf from user audit")
                     router.refresh()
                     onClose()
                     // Don't pre-select current PDF - user must choose a different one
                 }
                 else{
-                    alert("Failure: Did not removed premium pdf")
+                    toast.error("Failure: Did not removed premium pdf")
                 }
             }
 
@@ -73,7 +74,7 @@ export default function PdfDeleteSelectorModal({  submissionId,  currentPdfName,
             
         }
         catch{    
-            alert("Failure (Error): Did not removed premium pdf")    
+            toast.error("Failure (Error): Did not removed premium pdf")    
         }
     }
     const isCurrentPdf = (pdfName: string) => currentPdfName === pdfName

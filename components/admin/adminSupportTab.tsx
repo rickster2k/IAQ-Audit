@@ -7,6 +7,9 @@ import { deleteSupportRequest } from '@/app/actions/deleteSupportRequest'
 import { getSupportRequestsPagination } from '@/app/actions/getSupportRequestsPagination'
 import { usePagination } from '@/lib/hooks/usePagination'
 import PaginationControls from '@/components/shared/paginationControls'
+import { toast } from 'sonner'
+import { routerServerGlobal } from 'next/dist/server/lib/router-utils/router-server-context'
+import { useRouter } from 'next/navigation'
 
 const STATUS_OPTIONS = ['new', 'viewed', 'handled', 'important', 'flagged'] as const
 type SubmissionStatus = typeof STATUS_OPTIONS[number]
@@ -30,7 +33,7 @@ export default function AdminSupportTab({ helpDeskList, initialNextCursor, initi
   const [statuses, setStatuses] = useState<Record<string, SubmissionStatus>>(
     () => Object.fromEntries(helpDeskList.map(t => [t.id, (t.status as SubmissionStatus) ?? 'new']))
   )
-
+  const router = useRouter();
   const { data: tickets, currentPage, hasMore, loading, handleNext, handlePrevious } = usePagination<SupportSubmission>({
     initialData: helpDeskList,
     initialNextCursor,
@@ -49,10 +52,16 @@ export default function AdminSupportTab({ helpDeskList, initialNextCursor, initi
   const handleStatusChange = async (id: string, status: SubmissionStatus) => {
     setStatuses(prev => ({ ...prev, [id]: status }))
     const response = await updateSupportRequestStatus(id, status)
-    if (!response.success) console.error(response.error)
+    if(response.success){
+      toast.success("Success: Updated status of ticket")
+    }
+    else{
+      toast.error("failed: error occured updating ticket status")
+    }
   }
 
   const handleReply = (ticket: SupportSubmission) => {
+    toast.info("Launching default email")
     const subject = encodeURIComponent(`Re: ${ticket.subject}${ticket.reportId ? ` (Report ID: ${ticket.reportId})` : ''}`)
     const body = encodeURIComponent(`Hello ${ticket.name},\n\n`)
     window.location.href = `mailto:${ticket.email}?subject=${subject}&body=${body}`
@@ -61,13 +70,15 @@ export default function AdminSupportTab({ helpDeskList, initialNextCursor, initi
   const handleDelete = async (id: string) => {
     const response = await deleteSupportRequest(id)
     if (response.success) {
+      toast.success("success : deleted ticket")
       setStatuses(prev => {
         const next = { ...prev }
         delete next[id]
         return next
       })
+      router.refresh()
     } else {
-      console.error(response.error)
+      toast.error("failed: to delete ticket")
     }
   }
   

@@ -1,11 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { doc, updateDoc } from 'firebase/firestore'
-import { db } from '@/lib/services/firebase'
 import { GlobalStats } from '@/lib/types'
 import { updateAnnouncement } from '@/app/actions/updateAnouncement'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
 interface AdminAnnouncementTabProps {
   globalStats: GlobalStats
@@ -24,10 +23,10 @@ export default function AdminAnnouncementTab({ globalStats }: AdminAnnouncementT
     const result = await updateAnnouncement(announcementText, announcementUrl)
     
     if (result.success) {
-      alert('Announcement updated successfully!')
+      toast.success('Announcement updated successfully!')
       router.refresh() 
     } else {
-      alert(result.error || 'Failed to update announcement')
+      toast.error(result.error || 'Failed to update announcement')
     }
     
     setSaving(false)
@@ -43,10 +42,10 @@ export default function AdminAnnouncementTab({ globalStats }: AdminAnnouncementT
         // Then update the local state
         setAnnouncementText("")
         setAnnouncementUrl("")
-        alert('Announcement reset successfully!')
+        toast.success('Announcement reset successfully!')
         router.refresh()
       } else {
-        alert(result.error || 'Failed to reset announcement')
+        toast.error(result.error || 'Failed to reset announcement')
       }
       
       setSaving(false)

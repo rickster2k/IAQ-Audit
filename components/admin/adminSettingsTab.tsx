@@ -6,6 +6,7 @@ import { db } from '@/lib/services/firebase'
 import { GlobalStats } from '@/lib/types'
 import { updateAvgScore, updateShop } from '@/app/actions/updateGlobalStats'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
 interface AdminSettingsTabProps {
   globalStats: GlobalStats
@@ -18,6 +19,7 @@ export default function AdminSettingsTab({ globalStats }: AdminSettingsTabProps)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
+
   const handleSaveSettings = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSaving(true)
@@ -48,10 +50,10 @@ export default function AdminSettingsTab({ globalStats }: AdminSettingsTabProps)
     
     const res = await updateAvgScore()
     if (res.success){
-      alert("Success Avg Risk Score (In Sync with DB)")
+      toast.success("Success Avg Risk Score (In Sync with DB)")
       router.refresh()
     }else{
-      alert("Failed to sync avg risk")
+      toast.error("Failed to sync avg risk")
     }
   }
 
@@ -59,10 +61,10 @@ export default function AdminSettingsTab({ globalStats }: AdminSettingsTabProps)
 
     const res = await updateShop(paymentUrl, pricePoint)
     if (res.success){
-      alert("Success Updated Shop Values")
+      toast.success("Success Updated Shop Values")
       router.refresh()
     }else{
-      alert("Failed to update shop values")
+      toast.error("Failed to update shop values")
     }
   }
   return (

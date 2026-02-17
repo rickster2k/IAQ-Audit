@@ -4,6 +4,7 @@ import { SupportSubmission } from '@/lib/types';
 import Link from 'next/link';
 import Slider from '../shared/slider';
 import { addSupportRequest } from '@/app/actions/addSupportRequest';
+import { toast } from 'sonner';
 
 
 
@@ -40,10 +41,10 @@ export default function ContactSupport() {
 
     const res = await addSupportRequest(request);
     if( res.success){
-      alert("Your request has been submitted successfully! We will get back to you soon. Thank you for reaching out to us.")
+      toast.success("Your request has been submitted successfully!")
     }
     else{
-      alert("It seems the website is having an issue. Please try again later.")
+      toast.error("It seems the website is having an issue. Please try again later.")
     }
     setIsSubmitted(true);
     
