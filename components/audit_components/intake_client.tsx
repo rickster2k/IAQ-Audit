@@ -13,11 +13,7 @@ import { getAuditPdfBase64 } from "@/lib/utils/generateAuditPdf"
 import { sendAuditEmail } from "@/app/actions/sendAuditEmail"
 import { toast } from "sonner"
 
-interface IntakeClientProps {
-  referringReportId?: string
-}
-
-export default function IntakeClient({ referringReportId }: IntakeClientProps) {
+export default function IntakeClient() {
   const responses:UserResponse[] = useAuditStore((state) => state.responses)
   const [activeSubmission, setActiveSubmission] = useState<Submission | null>(null)
   const [contactInfo, setContactInfo] = useState<ContactInfo>({} as ContactInfo)
@@ -25,12 +21,16 @@ export default function IntakeClient({ referringReportId }: IntakeClientProps) {
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+
+  
+
   const handleContactSubmit = async (info: ContactInfo) => {
     setContactInfo(info)
     setIsAnalyzing(true)
     setError(null)
 
     try {
+      const referredBy:string | null = sessionStorage.getItem('referredBy')
       // Deduplicate responses by questionId before processing
       // (guards against double-saves from conditional question re-renders)
       const uniqueResponses = responses.filter(
@@ -48,7 +48,7 @@ export default function IntakeClient({ referringReportId }: IntakeClientProps) {
         contact: info,
         result,
         responses: uniqueResponses,
-        referredBy: referringReportId || null
+        referredBy: referredBy
       }
      
       // Step 3: Save to Firestore via server action

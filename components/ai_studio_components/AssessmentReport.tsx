@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { sectionExplanations } from '../data/sectionInfo';
 import { FileText, ExternalLink } from 'lucide-react'
 import DownloadScriptButton from '../user/userDownloadScriptButton';
+import { toast } from 'sonner';
 
 interface AssessmentReportProps {
   submission: Submission;
@@ -70,9 +71,9 @@ export default function AssessmentReport({
   const handleShare = async () => {
     const shareData = {
         title: 'IAQ Audit Results',
-        text: `I just completed my Indoor Air Quality Audit! My Health Risk Score is ${result.score}/100 (${result.riskLevel}). Report ID: ${reportId}. See how your home compares:`,
-        url: window.location.origin
-    };
+        text: `I just completed my Indoor Air Quality Audit! My Health Risk Score is ${result.score}/100 (${result.riskLevel}). \n\n ${inviteTextTop} \n\n${inviteTextBottom} See how your home compares: ${referralUrl}`,
+        url: referralUrl
+      };
 
     if (navigator.share) {
         try {
@@ -83,9 +84,10 @@ export default function AssessmentReport({
     } else {
         try {
             await navigator.clipboard.writeText(`${shareData.text} ${shareData.url}`);
-            alert('Result summary copied to clipboard!');
+            toast.success('Result summary copied to clipboard!');
         } catch (err) {
             console.error('Clipboard failed', err);
+            toast.error('Clipboard failed')
         }
     }
   };
@@ -98,25 +100,28 @@ export default function AssessmentReport({
   };
 
   const handleInviteFriends = async () => {
-    const fullMessage = `${inviteTextTop}\n\n${inviteTextBottom}\n\n${inviteLinkText}:\n${referralUrl}`;
+    const fullMessage = `${inviteTextTop}\n\n${inviteTextBottom}\n\n${inviteLinkText}:\n\n${referralUrl}`;
     
     if (navigator.share) {
       try {
         await navigator.share({
           title: 'IAQ Audit Invitation',
-          text: `${inviteTextTop}\n\n${inviteTextBottom}\n\n${inviteLinkText}:`,
-          url: referralUrl
+          text: `${inviteTextTop}\n\n${inviteTextBottom}\n\n${inviteLinkText}:\n\n${referralUrl}`,
         });
       } catch (err) {
         console.log('Share failed', err);
+        toast.error("Share failed!")
       }
     } else {
       try {
         await navigator.clipboard.writeText(fullMessage);
         setInviteSuccess(true);
         setTimeout(() => setInviteSuccess(false), 3000);
+        toast.success('Friend Invitation Copied to Clipboard!');
+
       } catch (err) {
         console.error('Clipboard failed', err);
+        toast.error('Clipboard failed')
       }
     }
   };

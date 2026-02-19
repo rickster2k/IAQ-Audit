@@ -7,12 +7,14 @@ import { useEffect } from 'react'
 import WhyIAQMatters from './whyIAQMatters'
 import { HowItWorks } from './howItWorks'
 import AboutIAQ from './aboutIAQ'
+import { useSearchParams } from 'next/navigation'
 
 interface LandingPageProps {
   reportCount?: number
 }
 
 export default function LandingPageMain({  reportCount = 0,}: LandingPageProps) {
+  const searchParams = useSearchParams()
 
   const baseCount:number = 53221
   const totalReports = (baseCount + reportCount)
@@ -34,7 +36,11 @@ export default function LandingPageMain({  reportCount = 0,}: LandingPageProps) 
       incrementVisits()
       sessionStorage.setItem('hasVisited', 'true')
     }
-  }, [])
+
+    const ref = searchParams.get('ref')
+    if (ref) sessionStorage.setItem('referredBy', ref)
+
+  }, [searchParams])
 
   const handleStartAudit = async () => {
     await incrementStarts()
