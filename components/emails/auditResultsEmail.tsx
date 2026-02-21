@@ -55,7 +55,7 @@ export function AuditResultsEmail({
             </p>
 
             <p style={{ margin: '0 0 16px 0', color: '#475569', lineHeight: 1.6 }}>
-              Thank you for completing your IAQ Audit. Your full Q&A transcript is attached to this email as a PDF for your records.
+              Thank you for completing your IAQ Audit. Your full Q&A transcript can be accessed using the link below.
             </p>
 
             {/* Score card */}
@@ -82,7 +82,7 @@ export function AuditResultsEmail({
             </div>
 
             <p style={{ margin: '0 0 8px 0', color: '#475569', lineHeight: 1.6 }}>
-              Your attached PDF contains:
+              If you want a copy of your Audit, you can download your own Audit Summary PDF which contains:
             </p>
             <ul style={{ margin: '0 0 24px 0', paddingLeft: '20px', color: '#475569', lineHeight: 2 }}>
               <li>Your complete Q&A transcript</li>

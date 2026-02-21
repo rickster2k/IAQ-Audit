@@ -9,13 +9,12 @@ interface SendAuditEmailParams {
   reportId: string
   score: number
   riskLevel: string
-  pdfBase64: string
 }
 
 export async function sendAuditEmail(
   params: SendAuditEmailParams
 ): Promise<{ success: boolean; error?: string }> {
-  const { toEmail, firstName, reportId, score, riskLevel, pdfBase64 } = params
+  const { toEmail, firstName, reportId, score, riskLevel } = params
 
   const apiKey   = process.env.RESEND_API_KEY
   const fromEmail = process.env.RESEND_FROM_EMAIL
@@ -33,12 +32,6 @@ export async function sendAuditEmail(
       to:      toEmail,
       subject: `Your IAQ Audit Report is Ready — ${reportId}`,
       react:   AuditResultsEmail({ firstName, reportId, score, riskLevel , email:toEmail }),
-      attachments: [
-        {
-          filename: `IAQ_Audit_Script_${reportId}.pdf`,
-          content:  pdfBase64,
-        },
-      ],
     })
 
     if (error) {

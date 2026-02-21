@@ -49,7 +49,7 @@ export default function LandingPageMain({  reportCount = 0,}: LandingPageProps) 
 
   return (
     <div className="w-full fade-in">
-      <section className="relative overflow-hidden bg-white pt-10 pb-12 lg:pt-16 lg:pb-20 px-6">
+      <section className="relative overflow-hidden bg-white pt-6 pb-6 lg:pt-8 lg:pb-10 px-6">
         <div className="max-w-6xl mx-auto relative z-10 grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
 
           {/* Left content */}
@@ -85,14 +85,14 @@ export default function LandingPageMain({  reportCount = 0,}: LandingPageProps) 
               
             </div>
 
-            <h1 className="text-4xl lg:text-6xl font-bold text-[#1e3a5f] mb-4 tracking-tight leading-tight">
+            <h1 className="text-4xl lg:text-5xl font-bold text-[#1e3a5f] mb-3 tracking-tight leading-tight">
               Is Your Home&apos;s Air <br />
               <span className="text-transparent bg-clip-text bg-linear-to-r from-[#0d9488] to-cyan-600">
                 Silently Harming Your Family?
               </span>
             </h1>
 
-            <p className="text-base lg:text-lg text-slate-600 mb-8 leading-relaxed max-w-2xl mx-auto lg:mx-0">
+            <p className="text-base text-slate-600 mb-6 leading-relaxed max-w-2xl mx-auto lg:mx-0">
               Discover hidden pollutants, mold risks, and ventilation issues affecting your home&lsquo;s air
               - in just 5 minutes. Get your personalized home health and risk score plus expert recommendations delivered instantly.
             </p>

@@ -2,7 +2,7 @@
 export default function WhyIAQMatters() {
 
     return (
-      <section className="py-20 bg-slate-50 border-y border-slate-200 px-6">
+      <section className="py-10 bg-slate-50 border-y border-slate-200 px-3">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl lg:text-4xl font-black text-[#1e3a5f] mb-4 uppercase tracking-tight">Why Indoor Air Quality Matters</h2>
@@ -11,7 +11,7 @@ export default function WhyIAQMatters() {
             </p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-8 ">
             <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 flex flex-col items-center text-center hover:shadow-md transition-shadow group">
               <div className="w-16 h-16 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center mb-6 shadow-sm group-hover:bg-red-600 group-hover:text-white transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -32,7 +32,7 @@ export default function WhyIAQMatters() {
               </div>
               <h3 className="text-xl font-bold text-[#1e3a5f] mb-3">Cognitive Function</h3>
               <p className="text-slate-600 text-sm leading-relaxed">
-                High CO2 levels and VOCs can decrease productivity, impair decision-making, and cause "Brain Fog" and fatigue during the day.
+                High CO2 levels and VOCs can decrease productivity, impair decision-making, and cause &ldquo;Brain Fog&ldquo; and fatigue during the day.
               </p>
             </div>
 

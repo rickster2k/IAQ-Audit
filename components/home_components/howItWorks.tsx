@@ -3,9 +3,9 @@ import Link from "next/link";
 
 export function HowItWorks() {
   return (
-    <section className="py-24 bg-white px-6">
+    <section className="py-12 bg-white px-3">
       <div className="max-w-5xl mx-auto">
-        <div className="text-center mb-20">
+        <div className="text-center mb-10">
           <h2 className="text-3xl lg:text-5xl font-black text-[#1e3a5f] mb-4">How It Works</h2>
           <p className="text-slate-500 font-medium">Simple, Scientific, and 100% Free.</p>
         </div>

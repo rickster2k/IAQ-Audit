@@ -60,6 +60,24 @@ export default function IntakeClient() {
 
       // Step 3b: Generate PDF and email it to the user
       // Non-blocking — we don't want a failed email to block the user seeing results
+      try{
+          const emailResult = await sendAuditEmail({
+            toEmail:   info.email,
+            firstName: info.firstName,
+            reportId:  submission.reportId,
+            score:     result.score,
+            riskLevel: result.riskLevel,
+          })
+          if (!emailResult.success) {
+                console.error('Email send failed:', emailResult.error)
+                toast.error('Your report is ready but we could not send the confirmation email. You can still download it from your report page.')
+          }
+      }
+      catch(e) {
+          console.error('Email error details:', e)
+          toast.error('Your report is ready but we could not send the confirmation email. You can still download it from your report page.')
+      }
+      /*
       getAuditPdfBase64(submission)
         .then((pdfBase64) =>
           sendAuditEmail({
@@ -80,11 +98,7 @@ export default function IntakeClient() {
         .catch((emailErr) => {
           console.error('Email error details:', emailErr)
           toast.error('Your report is ready but we could not send the confirmation email. You can still download it from your report page.')
-        })
-      /*sendAuditEmailClient(submission).catch((emailErr) => {
-        console.error('Email error details:', emailErr) 
-        toast.error('Failed to send audit email. You can still download it online')
-      })*/
+        })*/
       
       // Step 4: Get announcement and friends data
       const [announcementResponse, friendsResponse] = await Promise.all([
