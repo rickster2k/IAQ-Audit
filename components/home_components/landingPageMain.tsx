@@ -8,6 +8,7 @@ import WhyIAQMatters from './whyIAQMatters'
 import { HowItWorks } from './howItWorks'
 import AboutIAQ from './aboutIAQ'
 import { useSearchParams } from 'next/navigation'
+import IAQHeroGraphic from './IAQHeroGraphic'
 
 interface LandingPageProps {
   reportCount?: number
@@ -70,9 +71,18 @@ export default function LandingPageMain({  reportCount = 0,}: LandingPageProps) 
                   />
                 ))}
               </div>
-              <span className="text-sm font-bold text-[#1e3a5f]">
-                Excellent Global Reviews
-              </span>
+              <div className="flex flex-col justify-center items-center gap-2">
+                  <span className="text-sm font-bold text-[#1e3a5f]"> Excellent Global Reviews </span>
+                  <div className='flex flex-row'>
+                    {[1,2,3,4,5].map(i => (
+                      <svg key={i} xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                    ))}
+                  </div>
+                  
+              </div>
+              
             </div>
 
             <h1 className="text-4xl lg:text-6xl font-bold text-[#1e3a5f] mb-4 tracking-tight leading-tight">
@@ -83,36 +93,26 @@ export default function LandingPageMain({  reportCount = 0,}: LandingPageProps) 
             </h1>
 
             <p className="text-base lg:text-lg text-slate-600 mb-8 leading-relaxed max-w-2xl mx-auto lg:mx-0">
-              Discover hidden pollutants, mold risks, and ventilation issues
-              currently in your home in just 5 minutes.
+              Discover hidden pollutants, mold risks, and ventilation issues affecting your home&lsquo;s air
+              - in just 5 minutes. Get your personalized home health and risk score plus expert recommendations delivered instantly.
             </p>
 
             <div className="flex flex-col items-center lg:items-start gap-4">
               
                 <Link href="/audit" onClick={handleStartAudit} className="bg-[#0d9488] hover:bg-teal-700 text-white text-xl font-bold py-4 px-10 rounded-xl shadow-lg transition-transform hover:-translate-y-1">Start Free Audit</Link>
+                <p className='text-slate-600'> 100% Free service. No credit card required</p>
                 <div className="text-[#1e3a5f] font-bold text-sm bg-blue-50 px-4 py-2 rounded-full border border-blue-100 inline-flex items-center gap-2">
                 <span className="relative flex h-2 w-2">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500" />
                 </span>
-                {totalReports} IAQ Audit Reports Generated Globally!
+                  10,000+ IAQ Audit Reports Generated Daily!
                 </div>
             </div>
           </div>
 
           {/* Right preview card */}
-          <div className="relative hidden lg:block bg-linear-to-br from-[#1e3a5f] to-[#162e4d] rounded-2xl p-8 shadow-2xl">
-            <div className="text-teal-400 font-bold uppercase tracking-widest text-xs mb-4">
-              IAQ Health Score Preview
-            </div>
-            <div className="text-5xl font-bold text-white mb-2">
-              45/100
-            </div>
-            <div className="text-slate-400 text-sm">
-              Risk Assessment:{' '}
-              <span className="text-orange-400 font-bold">Moderate</span>
-            </div>
-          </div>
+         < IAQHeroGraphic />
 
         </div>
       </section>

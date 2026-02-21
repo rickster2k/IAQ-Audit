@@ -219,7 +219,9 @@ export default function AssessmentReport({
             <p className="mt-4 text-xs text-slate-600 px-4 italic leading-relaxed">Based on documented contaminants and home habits.</p>
         </div>
 
-        <div className="bg-[#1e3a5f] rounded-2xl shadow-sm p-6 flex flex-col items-center justify-center text-center text-white animate-cta-pulse">
+        <div className="bg-[#1e3a5f] rounded-2xl shadow-sm p-6 flex flex-col items-center justify-center text-center text-white animate-glow-pulse">
+            <div className="absolute inset-0 animate-shimmer pointer-events-none" />
+
             <h3 className="text-lg font-semibold opacity-90 mb-4 px-2">Get a Detailed, Personalized Review Now</h3>
             <p className="text-sm opacity-80 mb-6">Your results indicate a detailed, personalized review from an indoor environmental professional could be beneficial.</p>
             <Link href="/user/review" className="bg-[#0d9488] hover:bg-teal-600 px-6 py-2 rounded-lg font-bold transition-colors w-full shadow-lg text-sm">

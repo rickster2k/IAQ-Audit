@@ -1,75 +1,91 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { verifyAuditAccess } from '@/app/actions/verifyAuditAccess'
 import Link from 'next/link'
 import { getAnnouncement, getFriends } from '@/app/actions/getters'
 import { Announcement, Submission } from '@/lib/types'
-import { useRouter } from 'next/navigation'
-
-
+import { useRouter, useSearchParams } from 'next/navigation'
 
 export default function UserLogin() {
   const [email, setEmail] = useState('')
   const [reportId, setReportId] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [autoLogging, setAutoLogging] = useState(false)
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const hasAutoSubmitted = useRef(false)
 
-  
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const performLogin = async (loginEmail: string, loginReportId: string) => {
     setError('')
     setLoading(true)
 
     try {
-      // Call server action to verify access
-      const result = await verifyAuditAccess(email, reportId)
-
+      const result = await verifyAuditAccess(loginEmail, loginReportId)
       const announcementResponse = await getAnnouncement()
+      const friendsResponse = await getFriends(loginReportId)
 
-      const friendsResponse = await getFriends(reportId)
-
-      if(announcementResponse.error){
-        setError("Error: No announcement found for this report ID.")
-      }
-      if(friendsResponse.error){
-        setError("Error: No announcement found for this report ID.")
-      }
-
-      let announcement: Announcement | null  = null
+      let announcement: Announcement | null = null
       let friends: Submission[] = []
 
-
-      if(announcementResponse.success ) {
+      if (announcementResponse.success) {
         announcement = announcementResponse.announcement
       }
-      if (friendsResponse.success){
+      if (friendsResponse.success) {
         friends = friendsResponse.friends
       }
 
-      
       if (result.success && result.submission) {
-        // Store in sessionStorage (cleared when browser closes)
         sessionStorage.setItem('audit', JSON.stringify(result.submission))
         sessionStorage.setItem('anouncement', JSON.stringify(announcement))
         sessionStorage.setItem('friends', JSON.stringify(friends))
-
-        // Notify header about session change
         window.dispatchEvent(new Event('audit-session-change'))
-        // Call user/report
-        //onLoginSuccess(result.submission)
-        //changeState("report")
         router.push('/user/report')
       } else {
+        setAutoLogging(false)
         setError(result.error || 'An error occurred. Please try again.')
       }
     } catch (err) {
       console.error('Login error:', err)
+      setAutoLogging(false)
       setError('An error occurred. Please try again later.')
     } finally {
       setLoading(false)
     }
+  }
+
+  // Auto-submit if URL params are present
+  useEffect(() => {
+    const urlEmail = searchParams.get('email')
+    const urlReportId = searchParams.get('reportId')
+
+    if (urlEmail && urlReportId && !hasAutoSubmitted.current) {
+      hasAutoSubmitted.current = true
+      setEmail(urlEmail)
+      setReportId(urlReportId)
+      setAutoLogging(true)
+      performLogin(urlEmail, urlReportId)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams])
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    await performLogin(email, reportId)
+  }
+
+  // Full screen auto-login loading state
+  if (autoLogging) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-[#0d9488] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-[#1e3a5f] font-semibold text-lg">Loading your report…</p>
+          <p className="text-slate-400 text-sm mt-1">Verifying your credentials</p>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -125,9 +141,9 @@ export default function UserLogin() {
         </button>
 
         <div className="text-center pt-2">
-          <Link 
+          <Link
             href="/user/recovery"
-            className={`text-sm font-bold text-[#1e3a5f] hover:text-[#0d9488] underline transition-colors ${loading ? 'opacity-50 pointer-events-none' : ''}'} `}
+            className={`text-sm font-bold text-[#1e3a5f] hover:text-[#0d9488] underline transition-colors ${loading ? 'opacity-50 pointer-events-none' : ''}`}
           >
             Recover Your Audit ID #
           </Link>

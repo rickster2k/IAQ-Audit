@@ -3,7 +3,8 @@ interface AuditResultsEmailProps {
   firstName: string
   reportId: string
   score: number
-  riskLevel: string
+  riskLevel: string,
+  email: string,
 }
 
 export function AuditResultsEmail({
@@ -11,6 +12,7 @@ export function AuditResultsEmail({
   reportId,
   score,
   riskLevel,
+  email,
 }: AuditResultsEmailProps) {
   const riskColor =
     riskLevel === 'Low'      ? '#16a34a' :
@@ -91,7 +93,7 @@ export function AuditResultsEmail({
             {/* CTA Button */}
             <div style={{ margin: '0 0 28px 0' }}>
               <a
-                href={`${process.env.NEXT_PUBLIC_APP_URL}`}
+                href={`${process.env.NEXT_PUBLIC_APP_URL}/login/user?email=${encodeURIComponent(email)}&reportId=${encodeURIComponent(reportId)}`}
                 style={{
                   display: 'inline-block',
                   textDecoration: 'none',

@@ -32,7 +32,7 @@ export async function sendAuditEmail(
       from:    fromEmail,
       to:      toEmail,
       subject: `Your IAQ Audit Report is Ready — ${reportId}`,
-      react:   AuditResultsEmail({ firstName, reportId, score, riskLevel }),
+      react:   AuditResultsEmail({ firstName, reportId, score, riskLevel , email:toEmail }),
       attachments: [
         {
           filename: `IAQ_Audit_Script_${reportId}.pdf`,
