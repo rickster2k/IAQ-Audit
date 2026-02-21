@@ -16,6 +16,8 @@ import AdminAuditSearchBar from "./adminAuditSearchBar"
 import { formatTimestamp } from "@/lib/utils/helperUtil"
 import { toast } from "sonner"
 import { EMPTY_FILTERS, hasActiveFilters } from "@/lib/utils/auditFilters"
+import { getAllAuditSubmissionsFiltered } from "@/app/actions/getAllAuditSubmissionFiltered"
+import { downloadCsv, submissionsToCsvString } from "@/lib/utils/csvUtils"
 
 type AdminAuditTabProps = {
     submissions: Submission[]
@@ -45,6 +47,8 @@ export default function AdminAuditTab({
     const [modalSubmissionId, setModalSubmissionId] = useState<string | null>(null)
     const [activeFilters, setActiveFilters] = useState<AuditFilters>(EMPTY_FILTERS)
     const [isSearching, setIsSearching] = useState(false)
+    const [isExporting, setIsExporting] = useState(false)
+
     const router = useRouter()
 
     // Determines which fetch function the pagination hook uses.
@@ -106,6 +110,39 @@ export default function AdminAuditTab({
         }
         setIsSearching(false)
     }
+    // ── CSV Export handler ──────────────────────────────────────────────────
+
+    const handleCsvExport = async () => {
+        setIsExporting(true)
+        try {
+            const result = await getAllAuditSubmissionsFiltered(activeFilters)
+            
+            if (!result.success) {
+                toast.error('Failed to export data')
+                return
+            }
+
+            if (result.data.length === 0) {
+                toast.info('No data to export')
+                return
+            }
+
+            const csvString = submissionsToCsvString(result.data)
+            const timestamp = new Date().toISOString().split('T')[0]
+            const filterLabel = hasActiveFilters(activeFilters) 
+                ? `-${activeFilters.searchType || 'filtered'}`
+                : '-all'
+            const filename = `audit-reports${filterLabel}-${timestamp}.csv`
+            
+            downloadCsv(csvString, filename)
+            toast.success(`Exported ${result.data.length} reports`)
+        } catch (error) {
+            console.error('CSV export error:', error)
+            toast.error('An error occurred during export')
+        } finally {
+            setIsExporting(false)
+        }
+    }
 
     // ── PDF / submission handlers ────────────────────────────────────────────
 
@@ -164,8 +201,7 @@ export default function AdminAuditTab({
             toast.error('An error occurred while resetting premium PDF')
         }
     }
-
-    // ── Render ───────────────────────────────────────────────────────────────
+    const capitalize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
 
     return (
         <>
@@ -180,6 +216,8 @@ export default function AdminAuditTab({
                                         onSearch={handleSearch}
                                         onClear={handleClearSearch}
                                         isSearching={isSearching}
+                                        onExport={handleCsvExport}
+                                        isExporting={isExporting}
                                     />
                                 </td>
                             </tr>
@@ -222,7 +260,7 @@ export default function AdminAuditTab({
                                     <tr key={sub.id} className="border-b last:border-0">
                                         <td className="p-3">{currentPage * 5 + index + 1}</td>
                                         <td className="p-3 font-mono">{sub.reportId}</td>
-                                        <td className="p-3">{sub.contact.firstName} {sub.contact.lastName}</td>
+                                        <td className="p-3">{capitalize(sub.contact.firstName)} {capitalize(sub.contact.lastName)}</td>
                                         <td className="p-3">{sub.contact.email}</td>
                                         <td className="p-3 text-slate-500 text-xs">{formatTimestamp(sub.timestamp)}</td>
                                         <td className="p-3 font-semibold">{sub.result.score}</td>

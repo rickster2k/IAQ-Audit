@@ -1,5 +1,6 @@
 import { GlobalStats, Submission } from "@/lib/types";
 import { signOut } from 'next-auth/react'
+import HintTooltip from "../shared/toolTip";
 
 
 type AdminDashboardDisplayProps = {
@@ -26,10 +27,10 @@ export default function AdminDashboardClient({stats}: AdminDashboardDisplayProps
 
       {/* Stats */}
       <div className="grid grid-cols-4 gap-4">
-        <Stat label="Visits" value={stats.visits} />
-        <Stat label="Starts" value={stats.starts} />
-        <Stat label="Reports" value={stats.reports} />
-        <Stat label="Avg Risk Score" value={stats.avgScore} />
+        <Stat label="Visits" value={stats.visits} hint="Total number of unique visits to your landing page. This is your reach metric."/>
+        <Stat label="Starts" value={stats.starts} hint="Tracks initial engagement when a user clicks 'Start Free Audit'. This is your top-of-funnel metric. Compare Visits→Starts to measure landing page effectiveness, and Starts→Reports to identify drop-off points."/>
+        <Stat label="Reports" value={stats.reports} hint="Total completed assessments. This represents actual conversions from your funnel."/>
+        <Stat label="Avg Risk Score" value={stats.avgScore} hint="Average risk score across all completed reports. Helps you understand the typical risk profile of your audience."/>
       </div>
 
         
@@ -38,13 +39,21 @@ export default function AdminDashboardClient({stats}: AdminDashboardDisplayProps
 }
 
 
-function Stat({ label, value }: { label: string; value: number | string }) {
+function Stat({ label, value, hint }: { label: string; value: number | string , hint?: string }) {
   return (
-    <div className="bg-white p-4 rounded-xl border">
+  <div className="bg-white p-4 rounded-xl border">
+    <div className="flex flex-row gap-4 items-center">
       <div className="text-xs uppercase text-slate-500">{label}</div>
-      <div className="text-2xl font-bold text-orange-600">
-        {value}
-      </div>
+      {hint && (
+        <div className="ml-auto">
+          <HintTooltip text={hint}/>
+        </div>
+      )}
     </div>
+    
+    <div className="text-2xl font-bold text-orange-600">
+      {value}
+    </div>
+  </div>
   )
 }

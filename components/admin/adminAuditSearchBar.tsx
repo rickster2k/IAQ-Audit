@@ -25,10 +25,12 @@ const RISK_STYLES: Record<RiskLevel, string> = {
 interface Props {
   onSearch: (filters: AuditFilters) => void
   onClear: () => void
+  onExport: () => void
   isSearching: boolean
+  isExporting: boolean
 }
 
-export default function AdminAuditSearchBar({ onSearch, onClear, isSearching }: Props) {
+export default function AdminAuditSearchBar({ onSearch, onClear, onExport, isSearching, isExporting }: Props) {
   const [searchType, setSearchType] = useState<SearchType>('name')
   const [searchValue, setSearchValue] = useState('')
   const [riskLevel, setRiskLevel] = useState<RiskLevel | ''>('')
@@ -103,6 +105,33 @@ export default function AdminAuditSearchBar({ onSearch, onClear, isSearching }: 
             Filtered
           </span>
         )}
+
+        {/* CSV Export Button - right-aligned */}
+        <div className="ml-auto px-3">
+          <button
+            onClick={onExport}
+            disabled={isExporting}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            title="Export current results to CSV"
+          >
+            {isExporting ? (
+              <>
+                <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
+                </svg>
+                Exporting…
+              </>
+            ) : (
+              <>
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Export CSV
+              </>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Input row */}

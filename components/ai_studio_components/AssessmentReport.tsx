@@ -157,7 +157,7 @@ export default function AssessmentReport({
                 <span className="text-sm font-mono font-bold text-[#1e3a5f]">{reportId}</span>
             </div>
 
-            {announcement && (
+            {(announcement && announcement.url!= "" && announcement.text != "") && (
               <div className="mt-4 w-full max-w-xl animate-fade-in">
                 <div className="bg-teal-50 border border-teal-200 px-6 py-4 rounded-2xl shadow-sm flex items-center gap-3 justify-center">
                   <div className="bg-[#0d9488] text-white p-1.5 rounded-full shrink-0">
