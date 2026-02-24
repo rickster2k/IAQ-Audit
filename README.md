@@ -1,36 +1,32 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# IAQ Audit Web App
 
-## Getting Started
+## Purpose
 
-To run the development server:
+To give an free tool for users to get an indoor air qualiry report. With an option premium information. 
 
+### Context
+
+Initially started with Google AI studio code, was written to work only in the browser and using local storage, with some features being incomplete. Created a blank next js project and imported all the ui components from the initial build and incorporated them to replicate what the client initially had. Decided to use firebase as an a backend and create a ci/cd pipline using cloud run. 
+
+### How To Run Locally
+
+You will need to create .env.local file that will hold all the environment variables needed to have the app run correctly
+
+To run this locally clone this repo locally than run 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```
+to launch the development version. 
+
+To launch the production version 
+run 
+```bash 
+npm run build 
+npm run start-standalone
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Deployment
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Currently deployed at www.iaqaudit.com via domain mapping on a cloud run service. The cloud run service is set up with a ci/cd github pipeline that update via a push to the main branch.
