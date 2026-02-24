@@ -2,9 +2,11 @@ import { GetGlobalStats } from "@/app/actions/getGlobalStats";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import  ProfessionalReview  from "@/components/ai_studio_components/ProfessionalReview";
 import { GlobalStats } from "@/lib/types";
+import { verifyUserIsValid } from "@/lib/utils/verifyUserIsValid";
 import { getServerSession } from "next-auth";
 
 export default async function Review(){
+    await verifyUserIsValid()
     let globalStats:GlobalStats | null = null
 
 
