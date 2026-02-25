@@ -35,7 +35,7 @@ export async function updateReportsAndRiskScore() {
 
       transaction.update(statsRef, {
         reports: FieldValue.increment(1),
-        avgRiskScore,
+        avgScore: avgRiskScore,
       })
     })
 
@@ -103,8 +103,8 @@ export async function updateAvgScore() {
 
     if (!submissions.length) {
       return {
-        success: false,
-        error: 'No submissions found.',
+        success: true,
+        avgScore: 0.00,
       }
     }
 

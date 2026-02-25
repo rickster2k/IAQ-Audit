@@ -1,6 +1,6 @@
 'use server'
 
-import { saveSubmission as saveToFirestore, updateAverageScore } from '@/lib/services/firestoreService'
+import { saveSubmission as saveToFirestore } from '@/lib/services/firestoreService'
 import { Submission } from '@/lib/types'
 import { updateReportsAndRiskScore } from './updateGlobalStats'
 
@@ -13,7 +13,7 @@ export async function saveSubmission(submission: Submission) {
     //await incrementGlobalStat('reports')
     await updateReportsAndRiskScore()
     // Update average score
-    await updateAverageScore(submission.result.score)
+    //await updateAverageScore(submission.result.score)
     
     return {
       success: true,
