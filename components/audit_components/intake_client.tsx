@@ -9,9 +9,9 @@ import { useAuditStore } from "@/lib/auditStore"
 import { saveSubmission } from "@/app/actions/saveSubmission"
 import { getAnnouncement, getFriends } from "@/app/actions/getters"
 import { analyzeIAQAssessment } from "@/app/actions/analyzeAssesmentGemini"
-import { getAuditPdfBase64 } from "@/lib/utils/generateAuditPdf"
 import { sendAuditEmail } from "@/app/actions/sendAuditEmail"
 import { toast } from "sonner"
+import { verifyAuditAccess } from "@/app/actions/verifyAuditAccess"
 
 export default function IntakeClient() {
   const responses:UserResponse[] = useAuditStore((state) => state.responses)
@@ -77,29 +77,10 @@ export default function IntakeClient() {
           console.error('Email error details:', e)
           toast.error('Your report is ready but we could not send the confirmation email. You can still download it from your report page.')
       }
-      /*
-      getAuditPdfBase64(submission)
-        .then((pdfBase64) =>
-          sendAuditEmail({
-            toEmail:   info.email,
-            firstName: info.firstName,
-            reportId:  submission.reportId,
-            score:     result.score,
-            riskLevel: result.riskLevel,
-            pdfBase64,
-          })
-        )
-        .then((emailResult) => {
-          if (!emailResult.success) {
-            console.error('Email send failed:', emailResult.error)
-            toast.error('Your report is ready but we could not send the confirmation email. You can still download it from your report page.')
-          }
-        })
-        .catch((emailErr) => {
-          console.error('Email error details:', emailErr)
-          toast.error('Your report is ready but we could not send the confirmation email. You can still download it from your report page.')
-        })*/
-      
+     
+      // Step 3c: Set httpOnly session cookie (same as login flow)
+      // Submission is now in Firestore so verifyAuditAccess will find it
+      await verifyAuditAccess(info.email.trim().toLowerCase(), submission.reportId)
       // Step 4: Get announcement and friends data
       const [announcementResponse, friendsResponse] = await Promise.all([
         getAnnouncement(),
