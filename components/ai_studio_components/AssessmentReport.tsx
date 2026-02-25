@@ -7,6 +7,7 @@ import { sectionExplanations } from '../data/sectionInfo';
 import { FileText, ExternalLink } from 'lucide-react'
 import DownloadScriptButton from '../user/userDownloadScriptButton';
 import { toast } from 'sonner';
+import { getSignedPdfUrl } from '@/app/actions/getSignedPdfUrl';
 
 interface AssessmentReportProps {
   submission: Submission;
@@ -126,10 +127,16 @@ export default function AssessmentReport({
     }
   };
 
-  const handleDownloadPremium = () => {
-    if (!activeSubmission?.premiumDoc) return;
-    window.open(activeSubmission.premiumDoc.url, '_blank');
-  };
+  const handleDownloadPremium = async () => {
+    if (!activeSubmission?.premiumDoc?.name || !activeSubmission?.id) return;
+
+    const result = await getSignedPdfUrl(activeSubmission.id, activeSubmission.premiumDoc.name)
+    if (result.success) {
+      window.open(result.url, '_blank')
+    } else {
+      toast.error('Failed to load PDF. Please try again.')
+    }
+  }
 
   const handleSignOut = () => {
     

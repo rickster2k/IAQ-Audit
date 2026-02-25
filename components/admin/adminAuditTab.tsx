@@ -18,6 +18,7 @@ import { toast } from "sonner"
 import { EMPTY_FILTERS, hasActiveFilters } from "@/lib/utils/auditFilters"
 import { getAllAuditSubmissionsFiltered } from "@/app/actions/getAllAuditSubmissionFiltered"
 import { downloadCsv, submissionsToCsvString } from "@/lib/utils/csvUtils"
+import { getSignedPdfUrl } from "@/app/actions/getSignedPdfUrl"
 
 type AdminAuditTabProps = {
     submissions: Submission[]
@@ -169,11 +170,16 @@ export default function AdminAuditTab({
         }
     }
 
-    const handleViewPdf = (submission: Submission) => {
-        if (submission.premiumDoc?.url) {
-            window.open(submission.premiumDoc.url, '_blank')
-        } else {
+    const handleViewPdf = async (submission: Submission) => {
+        if (!submission.premiumDoc?.name || !submission.id) {
             toast.info('No PDF attached to this submission')
+            return
+        }
+        const result = await getSignedPdfUrl(submission.id, submission.premiumDoc.name)
+        if (result.success) {
+            window.open(result.url, '_blank')
+        } else {
+            toast.error('Failed to load PDF')
         }
     }
 
