@@ -21,10 +21,14 @@ export default function UserLogin() {
     setError('')
     setLoading(true)
 
+    // Sanitize inputs
+  const sanitizedEmail = loginEmail.trim()
+  const sanitizedReportId = loginReportId.trim()
+
     try {
-      const result = await verifyAuditAccess(loginEmail, loginReportId)
+      const result = await verifyAuditAccess(sanitizedEmail, sanitizedReportId)
       const announcementResponse = await getAnnouncement()
-      const friendsResponse = await getFriends(loginReportId)
+      const friendsResponse = await getFriends(sanitizedReportId)
 
       let announcement: Announcement | null = null
       let friends: Submission[] = []
