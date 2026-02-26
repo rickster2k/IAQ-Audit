@@ -22,15 +22,15 @@ export default function Footer() {
             </p>
 
             <div className="flex flex-wrap justify-center gap-6 text-xs">
-            <Link href="/terms" className="hover:text-white underline">
+            <Link href="/terms" target='_blank' className="hover:text-white underline">
                 Terms of Service
             </Link>
 
-            <Link href="/privacy" className="hover:text-white underline">
+            <Link href="/privacy" target='_blank' className="hover:text-white underline">
                 Privacy Policy
             </Link>
 
-            <Link href="/support" className="hover:text-white underline">
+            <Link href="/support"target='_blank' className="hover:text-white underline">
                 Contact Support
             </Link>
             </div>

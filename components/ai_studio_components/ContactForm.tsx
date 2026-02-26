@@ -174,7 +174,7 @@ export default function ContactForm ({ onSubmit, isAnalyzing, onShowTerms, onSho
               className="mt-1 h-4 w-4 text-[#0d9488] focus:ring-[#0d9488] border-gray-300 rounded cursor-pointer"
             />
             <label htmlFor="terms" className="text-sm text-slate-600 cursor-pointer select-none">
-              I have read and understand the <a href="?page=terms" target="_blank" className="text-[#0d9488] hover:underline font-semibold" rel="noopener noreferrer">Terms of Service</a> statement.
+              I have read and understand the <a href="/terms" target="_blank" className="text-[#0d9488] hover:underline font-semibold" rel="noopener noreferrer">Terms of Service</a> statement.
             </label>
         </div>
 
@@ -198,7 +198,7 @@ export default function ContactForm ({ onSubmit, isAnalyzing, onShowTerms, onSho
       </form>
       
       <div className="mt-6 text-center text-xs text-slate-500 leading-relaxed px-2">
-        This IAQ Audit service is provided by IAQ.network for general educational purposes only, and is not to be taken as a professional evaluation of the specific conditions of the Assessment taker's IAQ. Please also see our <a href="?page=privacy" target="_blank" className="text-[#0d9488] hover:underline" rel="noopener noreferrer">Privacy Policy</a>.
+        This IAQ Audit service is provided by IAQ.network for general educational purposes only, and is not to be taken as a professional evaluation of the specific conditions of the Assessment taker&lsquo;s IAQ. Please also see our <a href="/privacy" target="_blank" className="text-[#0d9488] hover:underline" rel="noopener noreferrer">Privacy Policy</a>.
       </div>
 
       {isAnalyzing && (

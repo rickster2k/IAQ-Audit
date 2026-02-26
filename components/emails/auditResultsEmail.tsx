@@ -1,3 +1,4 @@
+import { Capitalize } from "@/lib/utils/helperUtil"
 
 interface AuditResultsEmailProps {
   firstName: string
@@ -51,7 +52,7 @@ export function AuditResultsEmail({
           <div style={{ backgroundColor: '#ffffff', padding: '36px 32px', borderLeft: '1px solid #e2e8f0', borderRight: '1px solid #e2e8f0' }}>
 
             <p style={{ margin: '0 0 20px 0', color: '#1e3a5f', fontSize: '22px', fontWeight: 700 }}>
-              Hi {firstName}, your IAQ Audit Report is ready.
+              Hi {Capitalize(firstName)}, your IAQ Audit Report is ready.
             </p>
 
             <p style={{ margin: '0 0 16px 0', color: '#475569', lineHeight: 1.6 }}>

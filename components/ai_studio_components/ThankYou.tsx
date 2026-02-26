@@ -1,5 +1,6 @@
 
 import { ContactInfo, Submission } from '@/lib/types';
+import { Capitalize } from '@/lib/utils/helperUtil';
 import Link from 'next/link';
 
 interface ThankYouProps {
@@ -22,7 +23,7 @@ export default function ThankYou({ contact, submission }:ThankYouProps)  {
       
       <div className="bg-slate-50 p-6 rounded-xl border border-slate-200 mb-8 text-left">
         <p className="text-slate-700 text-lg leading-relaxed">
-          Thanks <span className="font-bold">{contact.firstName}</span>. Your Audit Report has been generated and you can access it via the browser. A link for you to access your report has been emailed to: <span className="font-bold text-[#0d9488]">{contact.email}</span>
+          Thanks <span className="font-bold">{Capitalize(contact.firstName)}</span>. Your Audit Report has been generated and you can access it via the browser. A link for you to access your report has been emailed to: <span className="font-bold text-[#0d9488]">{contact.email}</span>
         </p>
 
          <div className="bg-white p-4 rounded-lg border border-slate-200">

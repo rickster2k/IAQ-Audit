@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import AssessmentReport from '@/components/ai_studio_components/AssessmentReport'
 import { Announcement, Submission } from '@/lib/types'
+import { Capitalize } from '@/lib/utils/helperUtil'
 
 interface AdminReportClientProps {
   submission: Submission
@@ -50,7 +51,7 @@ export default function AdminReportClient({ submission, announcement, friends, u
         </div>
         <div>
           <strong>Name:</strong>{' '}
-          {submission.contact.firstName} {submission.contact.lastName}
+          {Capitalize(submission.contact.firstName)} {Capitalize(submission.contact.lastName)}
         </div>
         <div>
           <strong>Email:</strong> {submission.contact.email}

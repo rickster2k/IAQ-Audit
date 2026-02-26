@@ -4,10 +4,12 @@ import { AssessmentResult, ContactInfo, Submission } from '@/lib/types';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { sectionExplanations } from '../data/sectionInfo';
-import { FileText, ExternalLink } from 'lucide-react'
+import { FileText } from 'lucide-react'
 import DownloadScriptButton from '../user/userDownloadScriptButton';
 import { toast } from 'sonner';
 import { getSignedPdfUrl } from '@/app/actions/getSignedPdfUrl';
+import { Capitalize } from '@/lib/utils/helperUtil';
+import ShareInviteModal from '../user/ShareInviteModal';
 
 interface AssessmentReportProps {
   submission: Submission;
@@ -31,7 +33,11 @@ export default function AssessmentReport({
   activeSubmission = null
 }: AssessmentReportProps){ 
   const router = useRouter()
+  const [shareSuccess, setShareSuccess] = useState(false);
   const [inviteSuccess, setInviteSuccess] = useState(false);
+  const [modalMode, setModalMode] = useState<'invite' | 'share'>('invite');
+  const [showModal, setShowModal] = useState(false);
+
   const friendsAverageScore = useMemo(() => {
     if (friends.length === 0) return 0;
     const total = friends.reduce((sum, friend) => sum + friend.result.score, 0);
@@ -43,7 +49,7 @@ export default function AssessmentReport({
   const referralUrl = `${liveUrl}?ref=${reportId}`;
   const inviteTextTop = `I was really surprised by the Health Risk Score I received for my home's indoor air quality after taking this online IAQ Audit!`;
   const inviteTextBottom = `I thought you might want to know your home's Health Risk Score too.`;
-  const inviteLinkText = `Click Here to Find Out if Your Home's Indoor Air Quality is Healthy`;
+  const inviteLinkLabel = `Visit the Below Link to Find Out if Your Home's Indoor Air Quality is Healthy:`;
 
   const getRiskColor = (level: string) => {
     switch (level) {
@@ -69,28 +75,14 @@ export default function AssessmentReport({
     return "Hazardous";
   };
 
-  const handleShare = async () => {
-    const shareData = {
-        title: 'IAQ Audit Results',
-        text: `I just completed my Indoor Air Quality Audit! My Health Risk Score is ${result.score}/100 (${result.riskLevel}). \n\n ${inviteTextTop} \n\n${inviteTextBottom} See how your home compares: ${referralUrl}`,
-        url: referralUrl
-      };
+  const handleShare = () => {
+    setModalMode('share');
+    setShowModal(true);
+  };
 
-    if (navigator.share) {
-        try {
-            await navigator.share(shareData);
-        } catch (err) {
-            console.log('Share failed', err);
-        }
-    } else {
-        try {
-            await navigator.clipboard.writeText(`${shareData.text} ${shareData.url}`);
-            toast.success('Result summary copied to clipboard!');
-        } catch (err) {
-            console.error('Clipboard failed', err);
-            toast.error('Clipboard failed')
-        }
-    }
+  const handleInviteFriends = () => {
+    setModalMode('invite');
+    setShowModal(true);
   };
 
   const scrollToFriends = () => {
@@ -100,36 +92,8 @@ export default function AssessmentReport({
     }
   };
 
-  const handleInviteFriends = async () => {
-    const fullMessage = `${inviteTextTop}\n\n${inviteTextBottom}\n\n${inviteLinkText}:\n\n${referralUrl}`;
-    
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: 'IAQ Audit Invitation',
-          text: `${inviteTextTop}\n\n${inviteTextBottom}\n\n${inviteLinkText}:\n\n${referralUrl}`,
-        });
-      } catch (err) {
-        console.log('Share failed', err);
-        toast.error("Share failed!")
-      }
-    } else {
-      try {
-        await navigator.clipboard.writeText(fullMessage);
-        setInviteSuccess(true);
-        setTimeout(() => setInviteSuccess(false), 3000);
-        toast.success('Friend Invitation Copied to Clipboard!');
-
-      } catch (err) {
-        console.error('Clipboard failed', err);
-        toast.error('Clipboard failed')
-      }
-    }
-  };
-
   const handleDownloadPremium = async () => {
     if (!activeSubmission?.premiumDoc?.name || !activeSubmission?.id) return;
-
     const result = await getSignedPdfUrl(activeSubmission.id, activeSubmission.premiumDoc.name)
     if (result.success) {
       window.open(result.url, '_blank')
@@ -139,17 +103,11 @@ export default function AssessmentReport({
   }
 
   const handleSignOut = () => {
-    
-      // Clear audit session
-      sessionStorage.removeItem('audit')
-      sessionStorage.removeItem('announcement')
-      sessionStorage.removeItem('friends')
-      
-      // Dispatch custom event for other components
-      window.dispatchEvent(new Event('audit-session-change'))
-      
-      // Redirect to home
-      router.push('/')
+    sessionStorage.removeItem('audit')
+    sessionStorage.removeItem('announcement')
+    sessionStorage.removeItem('friends')
+    window.dispatchEvent(new Event('audit-session-change'))
+    router.push('/')
   }
   
 
@@ -158,7 +116,7 @@ export default function AssessmentReport({
       <div className="text-center mb-10 relative flex flex-col items-center">
         <h1 className="text-4xl font-bold text-[#1e3a5f] mb-2">IAQ Audit Report</h1>
         <div className="flex flex-col items-center gap-1 mb-4">
-            <p className="text-slate-500">Prepared for {contact.firstName} {contact.lastName} | {contact.email}</p>
+            <p className="text-slate-500">Prepared for {Capitalize(contact.firstName)} {Capitalize(contact.lastName)} | {contact.email}</p>
             <div className="bg-slate-100 px-3 py-1 rounded-md border border-slate-200 mt-1">
                 <span className="text-xs font-bold text-slate-400 uppercase tracking-widest mr-2">Audit Report ID:</span>
                 <span className="text-sm font-mono font-bold text-[#1e3a5f]">{reportId}</span>
@@ -182,10 +140,9 @@ export default function AssessmentReport({
               </div>
             )}
         </div>
-        
       </div>
 
-      {activeSubmission?.premiumDoc && (activeSubmission?.premiumDoc.name != "" && activeSubmission?.premiumDoc.url != "" ) &&  (
+      {activeSubmission?.premiumDoc && (activeSubmission?.premiumDoc.name != "" && activeSubmission?.premiumDoc.url != "" ) && (
         <div className="mb-8 w-full animate-fade-in">
           <div className="bg-linear-to-r from-[#1e3a5f] to-[#162e4d] p-1 rounded-2xl shadow-xl">
             <div className="bg-white rounded-[0.9rem] p-6 flex flex-col md:flex-row items-center justify-between gap-6">
@@ -228,7 +185,6 @@ export default function AssessmentReport({
 
         <div className="bg-[#1e3a5f] rounded-2xl shadow-sm p-6 flex flex-col items-center justify-center text-center text-white animate-glow-pulse">
             <div className="absolute inset-0 animate-shimmer pointer-events-none" />
-
             <h3 className="text-lg font-semibold opacity-90 mb-4 px-2">Get a Detailed, Personalized Review Now</h3>
             <p className="text-sm opacity-80 mb-6">Your results indicate a detailed, personalized review from an indoor environmental professional could be beneficial.</p>
             <Link href="/user/review" className="bg-[#0d9488] hover:bg-teal-600 px-6 py-2 rounded-lg font-bold transition-colors w-full shadow-lg text-sm">
@@ -238,12 +194,18 @@ export default function AssessmentReport({
       </div>
 
       <div className="flex flex-col items-center gap-6 mb-10">
+        {/* Share My Results — now opens modal in share mode */}
         <button onClick={handleShare} className="inline-flex items-center gap-2 bg-[#0d9488] hover:bg-teal-700 text-white px-8 py-3 rounded-full text-sm font-bold transition-all shadow-lg hover:-translate-y-1">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
             </svg>
             Share My Results
         </button>
+        {shareSuccess && (
+          <p className="text-[#0d9488] font-bold animate-fade-in text-sm text-center">
+            Results copied to clipboard!
+          </p>
+        )}
         <DownloadScriptButton submission={submission} />
         <button onClick={scrollToFriends} className="text-[#1e3a5f] hover:text-[#0d9488] text-xl md:text-2xl font-black flex items-center gap-3 transition-all hover:scale-105 animate-shake text-center px-4">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -333,14 +295,21 @@ export default function AssessmentReport({
             </span>
           </div>
 
+          {/* Invite Message Preview */}
           <div className="mb-10 p-6 bg-white rounded-2xl border-2 border-dashed border-slate-200 shadow-sm relative group">
             <span className="absolute -top-3 left-6 bg-[#1e3a5f] px-3 py-1 text-[10px] font-black text-white rounded-full uppercase tracking-widest">Your Invitation Message Preview</span>
             <div className="text-base text-slate-700 space-y-4 pt-2">
               <p>{inviteTextTop}</p>
               <p>{inviteTextBottom}</p>
-              <div className="pt-2">
-                <a href={referralUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 font-bold hover:underline">
-                  {inviteLinkText}
+              <div className="pt-2 space-y-1">
+                <p className="text-slate-700 font-semibold">{inviteLinkLabel}</p>
+                <a
+                  href={referralUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:underline break-all text-sm"
+                >
+                  {referralUrl}
                 </a>
               </div>
             </div>
@@ -363,9 +332,34 @@ export default function AssessmentReport({
       </div>
 
       <div className="mt-12 text-center">
-        {!isDashboardView && <button onClick={handleSignOut} className='text-slate-500 hover:text-[#1e3a5f] underline transition-colors'>Start New Audit (Warning Will Sign Out of Current Audit)</button>}
-        {/*isDashboardView ? (<Link href="/admin" className='text-slate-500 hover:text-[#1e3a5f] underline transition-colors' >Back to Admin Dashboard </Link> ) : ( <button onClick={handleSignOut} className='text-slate-500 hover:text-[#1e3a5f] underline transition-colors'>Start New Audit (Warning Will Sign Out of Current Audit)</button>) */}
+        {!isDashboardView && (
+          <button onClick={handleSignOut} className='text-slate-500 hover:text-[#1e3a5f] underline transition-colors'>
+            Start New Audit (Warning Will Sign Out of Current Audit)
+          </button>
+        )}
       </div>
+
+      {/* Shared modal — used by both Share My Results and Invite Friends */}
+      <ShareInviteModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        referralUrl={referralUrl}
+        inviteTextTop={inviteTextTop}
+        inviteTextBottom={inviteTextBottom}
+        inviteLinkLabel={inviteLinkLabel}
+        mode={modalMode}
+        score={result.score}
+        riskLevel={result.riskLevel}
+        onCopySuccess={() => {
+          if (modalMode === 'share') {
+            setShareSuccess(true);
+            setTimeout(() => setShareSuccess(false), 3000);
+          } else {
+            setInviteSuccess(true);
+            setTimeout(() => setInviteSuccess(false), 3000);
+          }
+        }}
+      />
     </div>
   );
-};
+}
