@@ -10,8 +10,7 @@ export async function middleware(req: NextRequest) {
   if (url.pathname === '/admin' || url.pathname.startsWith('/admin/')) {
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
 
-    const headers = new Headers(req.headers)
-    if (token) headers.set('x-debug-token', JSON.stringify(token))
+  
 
     if (!token) {
       url.pathname = '/'
@@ -23,7 +22,7 @@ export async function middleware(req: NextRequest) {
       return NextResponse.redirect(url)
     }
 
-    return NextResponse.next({ request: { headers } })
+    return NextResponse.next()
   }
 
   // ─── User Report Routes ─────────────────────────────────────────
