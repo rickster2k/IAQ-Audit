@@ -10,9 +10,9 @@ export async function verifyAuditAccess(email: string, reportId: string) {
     const normalizedReportId = reportId.trim().toUpperCase()
 
 
-    console.log("Checking audit access for email:", normalizedEmail)
-    console.log("normalizedReportId:", normalizedReportId)
-    console.log("Checking Firestore for matching submission...")
+    //console.log("Checking audit access for email:", normalizedEmail)
+    //console.log("normalizedReportId:", normalizedReportId)
+    //console.log("Checking Firestore for matching submission...")
 
     const adminDb = getAdminDb()
     
